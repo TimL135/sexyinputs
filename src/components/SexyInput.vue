@@ -186,25 +186,19 @@ export default defineComponent({
       }
     }
   }
-  input[type="date"] {
-    &:not(.dirty)::-webkit-datetime-edit {
-      color: transparent;
-      cursor: pointer;
-    }
-    &:focus::-webkit-datetime-edit {
-      display: block !important;
-    }
+  input[type="select"] {
     &::-webkit-calendar-picker-indicator {
-      display: block;
+      opacity: 0;
+    }
+  }
+  input[type="date"] {
+    &::-webkit-calendar-picker-indicator {
+      display: flex;
+      justify-content: end;
       cursor: pointer;
-      height: 90%;
-      width: auto;
-      min-width: 10%;
-      position: absolute;
-      left: 75%;
-      right: 0;
-      top: 0;
-      bottom: 0;
+      height: 3rem;
+      width: 3rem;
+      margin-bottom: 0.5rem;
     }
   }
 
@@ -254,15 +248,14 @@ export default defineComponent({
   input.dirty + .placeholder-text .text,
   input[type="file"] + .placeholder-text .text {
     background-color: white;
-    border-radius: 1rem;
+    border-radius: 1rem 1rem 0rem 0rem;
     font-size: 1.1rem;
-    color: rgb(22, 22, 22);
+    color: black;
     transform: translate(0, -100%);
     &.text:after {
       content: "";
       position: absolute;
       left: 0px;
-      // top: 25%;
       width: 100%;
       border-radius: 1rem 1rem 0rem 0rem;
       height: 50%;
