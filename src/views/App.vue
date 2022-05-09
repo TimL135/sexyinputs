@@ -38,6 +38,7 @@
         :options="array"
         optionKey="name"
       ></SexyInput>
+      <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
     </form>
   </div>
 </template>
@@ -54,6 +55,7 @@ export default defineComponent({
       file: null,
       select: "",
       array: [{ name: "hello" }, { name: "hallo" }],
+      text: "",
     };
   },
   components: {

@@ -222,7 +222,7 @@ export default defineComponent({
     background-color: transparent;
     justify-content: center;
   }
-  .placeholder-text {
+  input + .placeholder-text {
     align-items: center;
     position: absolute;
     top: 0;
@@ -296,7 +296,7 @@ export default defineComponent({
     }
   }
   .placeholder-text {
-    align-items: center;
+    align-items: start;
     position: absolute;
     top: 0;
     bottom: 0;
