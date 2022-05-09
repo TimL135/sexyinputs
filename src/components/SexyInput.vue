@@ -260,8 +260,8 @@ export default defineComponent({
       border-radius: 1rem 1rem 0rem 0rem;
       height: 50%;
       border-top: 2px solid black;
-      border-left: 2px solid black;
-      border-right: 2px solid black;
+      border-left: 2px solid #001;
+      border-right: 2px solid #001;
     }
   }
   input:focus + .placeholder-text .text {
@@ -332,8 +332,8 @@ export default defineComponent({
       border-radius: 1rem 1rem 0rem 0rem;
       height: 50%;
       border-top: 2px solid black;
-      border-left: 2px solid black;
-      border-right: 2px solid black;
+      border-left: 2px solid #001;
+      border-right: 2px solid #001;
     }
   }
   textarea:focus + .placeholder-text .text {
