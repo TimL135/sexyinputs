@@ -1,5 +1,5 @@
 <template>
-  <div class="input-contain mt-3" style="text-shadow: none">
+  <div class="input-contain mt-3 shadow-none">
     <input
       v-if="type != 'textarea'"
       v-bind="$attrs"
@@ -7,8 +7,9 @@
       :type="viewPassword ? 'text' : type"
       :value="modelValue"
       @input="updateValue"
-      :class="{ dirty: modelValue }"
-      :list="id"
+      :class="[{ dirty: modelValue }, type == 'range' ? 'pe-4' : '']"
+      :id="id"
+      :list="id2"
       autocomplete="off"
     />
     <textarea
@@ -23,7 +24,7 @@
     <label class="placeholder-text">
       <div class="text">{{ placeholder }}</div>
     </label>
-    <datalist :id="id" v-if="options">
+    <datalist :id="id2" v-if="options">
       <option
         :value="optionKey ? option[optionKey] : option"
         v-for="option of options"
@@ -89,11 +90,14 @@ export default defineComponent({
   data() {
     return {
       id: "",
+      id2: "",
       viewPassword: false,
+      element: null as unknown as HTMLInputElement,
     };
   },
   mounted() {
     this.id = "input" + Math.random();
+    this.id2 = "list" + Math.random();
     if (this.type == "date") {
       if (this.modelValue.length == 10) {
         return;
@@ -101,6 +105,9 @@ export default defineComponent({
       const date = new Date();
       const result = date.toISOString().split("T")[0];
       this.updateValue(result);
+      setTimeout(() => {
+        this.element = document.getElementById(this.id) as HTMLInputElement;
+      }, 0);
     }
   },
   props: {
@@ -136,6 +143,11 @@ export default defineComponent({
       this.viewPassword = !this.viewPassword;
     },
     updateValue(event: Event | string) {
+      if (this.type == "range") {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.setBackgroundSize(event.target);
+      }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       if (typeof event == "string") {
@@ -152,6 +164,19 @@ export default defineComponent({
       } catch {
         return;
       }
+    },
+    setBackgroundSize(element: HTMLInputElement) {
+      element?.style.setProperty(
+        "--background-size",
+        `${this.getBackgroundSize(element)}%`
+      );
+    },
+    getBackgroundSize(element: HTMLInputElement) {
+      const min = +element!.min || 0;
+      const max = +element!.max || 100;
+      const value = +element!.value;
+      const size = ((value - min) / (max - min)) * 100;
+      return size;
     },
   },
 });
@@ -184,6 +209,31 @@ export default defineComponent({
         border-color: var(--navbarColor1);
         color: var(--navbarColor1);
       }
+    }
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    &::-webkit-slider-runnable-track {
+      height: 3px;
+      background: linear-gradient(to right, #293043, #293043), #d7d7d7;
+      background-size: var(--background-size, 0%) 100%;
+      background-repeat: no-repeat;
+      border-radius: 5px;
+    }
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      background: #293043;
+      border: solid white 1px;
+      border-radius: 50%;
+      margin-top: -6px;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
     }
   }
   input[type="select"] {
@@ -246,6 +296,7 @@ export default defineComponent({
   }
   input:focus + .placeholder-text .text,
   input.dirty + .placeholder-text .text,
+  input[type="range"] + .placeholder-text .text,
   input[type="file"] + .placeholder-text .text {
     background-color: white;
     border-radius: 1rem 1rem 0rem 0rem;
@@ -327,7 +378,6 @@ export default defineComponent({
       content: "";
       position: absolute;
       left: 0px;
-      // top: 25%;
       width: 100%;
       border-radius: 1rem 1rem 0rem 0rem;
       height: 50%;

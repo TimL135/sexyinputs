@@ -39,6 +39,7 @@
         optionKey="name"
       ></SexyInput>
       <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
+      <SexyInput placeholder="Volume" type="range" v-model="range"></SexyInput>
     </form>
   </div>
 </template>
@@ -54,6 +55,7 @@ export default defineComponent({
       date: "",
       file: null,
       select: "",
+      range: 0,
       array: [{ name: "hello" }, { name: "hallo" }],
       text: "",
     };
