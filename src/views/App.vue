@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-center">
-    <form action="" class="w-25">
+    <form action="" style="width: 25%">
       <SexyInput
         placeholder="Email"
         type="email"

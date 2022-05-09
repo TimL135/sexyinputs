@@ -197,10 +197,11 @@ export default defineComponent({
     &::-webkit-calendar-picker-indicator {
       display: block;
       cursor: pointer;
-      height: auto;
+      height: 90%;
       width: auto;
+      min-width: 10%;
       position: absolute;
-      left: 90%;
+      left: 75%;
       right: 0;
       top: 0;
       bottom: 0;
