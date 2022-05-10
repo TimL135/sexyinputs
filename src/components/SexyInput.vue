@@ -8,6 +8,11 @@
       :value="modelValue"
       @input="updateValue"
       :class="[{ dirty: modelValue }, type == 'range' ? 'pe-4' : '']"
+      :style="
+        btnText || type == 'password'
+          ? 'border-radius: 1rem 0 0 1rem; width:80%'
+          : ''
+      "
       :id="id"
       :list="id2"
       autocomplete="off"
@@ -31,6 +36,28 @@
         :key="JSON.stringify(option)"
       ></option>
     </datalist>
+    <input
+      type="number"
+      @input="inputNumber"
+      :value="modelValue"
+      v-if="type == 'range'"
+      min="0"
+      max="100"
+      style="
+        align-items: center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 80%;
+        right: 0;
+        width: 20%;
+        border-radius: 0 1rem 1rem 0;
+        border-left: none;
+        display: flex;
+        background-color: transparent;
+        justify-content: center;
+      "
+    />
     <button v-if="btnText" type="button" @click="affirm()" :class="btnClass">
       {{ btnText }}
     </button>
@@ -105,9 +132,12 @@ export default defineComponent({
       const date = new Date();
       const result = date.toISOString().split("T")[0];
       this.updateValue(result);
+    }
+    if (this.type == "range") {
       setTimeout(() => {
         this.element = document.getElementById(this.id) as HTMLInputElement;
-      }, 0);
+        this.setBackgroundSize();
+      }, 1);
     }
   },
   props: {
@@ -121,6 +151,7 @@ export default defineComponent({
     },
     type: {
       type: String,
+      required: true,
     },
     btnText: {
       type: String,
@@ -142,11 +173,13 @@ export default defineComponent({
     showPassword() {
       this.viewPassword = !this.viewPassword;
     },
+    async inputNumber(event: Event) {
+      await this.updateValue(event);
+      this.setBackgroundSize();
+    },
     updateValue(event: Event | string) {
       if (this.type == "range") {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        this.setBackgroundSize(event.target);
+        this.setBackgroundSize();
       }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -165,16 +198,16 @@ export default defineComponent({
         return;
       }
     },
-    setBackgroundSize(element: HTMLInputElement) {
-      element?.style.setProperty(
+    setBackgroundSize() {
+      this.element?.style.setProperty(
         "--background-size",
-        `${this.getBackgroundSize(element)}%`
+        `${this.getBackgroundSize()}%`
       );
     },
-    getBackgroundSize(element: HTMLInputElement) {
-      const min = +element!.min || 0;
-      const max = +element!.max || 100;
-      const value = +element!.value;
+    getBackgroundSize() {
+      const min = +this.element!.min || 0;
+      const max = +this.element!.max || 100;
+      const value = +this.element!.value;
       const size = ((value - min) / (max - min)) * 100;
       return size;
     },
@@ -214,10 +247,11 @@ export default defineComponent({
   input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    background: transparent;
+    border-radius: 1rem 0 0 1rem;
+    width: 80%;
     cursor: pointer;
     &::-webkit-slider-runnable-track {
-      height: 3px;
+      height: 0.2rem;
       background: linear-gradient(to right, #293043, #293043), #d7d7d7;
       background-size: var(--background-size, 0%) 100%;
       background-repeat: no-repeat;
@@ -226,13 +260,12 @@ export default defineComponent({
     &::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 15px;
-      height: 15px;
-      cursor: pointer;
+      width: 1rem;
+      height: 1rem;
       background: #293043;
-      border: solid white 1px;
+      border: 1px white solid;
       border-radius: 50%;
-      margin-top: -6px;
+      margin-top: -0.4rem;
       box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
     }
   }
@@ -259,6 +292,15 @@ export default defineComponent({
       padding: 0.3rem;
     }
   }
+  input[type="number"] {
+    padding: 0;
+    text-align: center;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
   button {
     align-items: center;
     position: absolute;
@@ -267,7 +309,8 @@ export default defineComponent({
     left: 80%;
     right: 0;
     width: 20%;
-    border-radius: 1rem;
+    border-radius: 0 1rem 1rem 0;
+    border-left: none;
     display: flex;
     background-color: transparent;
     justify-content: center;
