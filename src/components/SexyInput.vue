@@ -1,7 +1,7 @@
 <template>
   <div class="input-contain mt-3 shadow-none">
     <input
-      v-if="type != 'textarea'"
+      v-if="type != 'textarea' && type != 'select'"
       v-bind="$attrs"
       class="form-control shadow-none"
       :type="viewPassword ? 'text' : type"
@@ -17,6 +17,67 @@
       :list="id2"
       autocomplete="off"
     />
+    <div class="simple-typeahead input-contain" v-if="type == 'select'">
+      <input
+        v-bind="$attrs"
+        :id="id"
+        class="simple-typeahead-input form-control shadow-none"
+        :class="{ dirty: modelValue }"
+        type="text"
+        :value="modelValue"
+        @input="onInput"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keydown.down.prevent="onArrowDown"
+        @keydown.up.prevent="onArrowUp"
+        @keydown.enter.tab.prevent="selectCurrentSelection"
+        autocomplete="off"
+      />
+      <label class="placeholder-text">
+        <div class="text">{{ placeholder }}</div>
+      </label>
+      <div
+        v-if="isListVisible && type == 'select'"
+        class="simple-typeahead-list"
+      >
+        <div class="simple-typeahead-list-header" v-if="$slots['list-header']">
+          <slot name="list-header"></slot>
+        </div>
+        <div
+          class="simple-typeahead-list-item"
+          :class="{
+            'simple-typeahead-list-item-active': currentSelectionIndex == index,
+          }"
+          v-for="(item, index) in filteredItems"
+          :key="index"
+          @mousedown.prevent
+          @click="selectItem(item)"
+          @mouseenter="currentSelectionIndex = index"
+        >
+          <span
+            class="simple-typeahead-list-item-text"
+            :data-text="optionProjection(item)"
+            v-if="$slots['list-item-text']"
+          >
+            <slot
+              name="list-item-text"
+              :item="item"
+              :optionProjection="optionProjection"
+              :boldMatchText="boldMatchText"
+            ></slot>
+          </span>
+          <span
+            class="simple-typeahead-list-item-text"
+            :data-text="optionProjection(item)"
+            v-html="boldMatchText(optionProjection(item))"
+            v-else
+          ></span>
+        </div>
+        <div class="simple-typeahead-list-footer" v-if="$slots['list-footer']">
+          <slot name="list-footer"></slot>
+        </div>
+      </div>
+    </div>
     <textarea
       v-if="type == 'textarea'"
       v-bind="$attrs"
@@ -26,16 +87,11 @@
       :class="{ dirty: modelValue }"
       rows="3"
     ></textarea>
-    <label class="placeholder-text">
+
+    <label class="placeholder-text" v-if="type != 'select'">
       <div class="text">{{ placeholder }}</div>
     </label>
-    <datalist :id="id2" v-if="options">
-      <option
-        :value="optionKey ? option[optionKey] : option"
-        v-for="option of options"
-        :key="JSON.stringify(option)"
-      ></option>
-    </datalist>
+
     <input
       type="number"
       @input="inputNumber"
@@ -114,39 +170,14 @@ export default defineComponent({
   setup() {
     return;
   },
-  data() {
-    return {
-      id: "",
-      id2: "",
-      viewPassword: false,
-      element: null as unknown as HTMLInputElement,
-    };
-  },
-  mounted() {
-    this.id = "input" + Math.random();
-    this.id2 = "list" + Math.random();
-    if (this.type == "date") {
-      if (this.modelValue.length == 10) {
-        return;
-      }
-      const date = new Date();
-      const result = date.toISOString().split("T")[0];
-      this.updateValue(result);
-    }
-    if (this.type == "range") {
-      setTimeout(() => {
-        this.element = document.getElementById(this.id) as HTMLInputElement;
-        this.setBackgroundSize();
-      }, 1);
-    }
-  },
+
   props: {
     placeholder: {
       type: String,
       required: true,
     },
     modelValue: {
-      type: String || Number,
+      type: String || Number || Object,
       required: true,
     },
     type: {
@@ -165,9 +196,66 @@ export default defineComponent({
     options: {
       type: Array,
     },
-    optionKey: {
-      type: String,
+    optionProjection: {
+      type: Function,
+      default: (item: any) => {
+        return item;
+      },
     },
+    minInputLength: {
+      type: Number,
+      default: 2,
+      validator: (prop: any) => {
+        return prop >= 0;
+      },
+    },
+  },
+
+  data() {
+    return {
+      id: "input" + Math.random(),
+      id2: "list" + Math.random(),
+      viewPassword: false,
+      element: null as unknown as HTMLInputElement,
+      isInputFocused: false,
+      currentSelectionIndex: 0,
+    };
+  },
+  computed: {
+    wrapperId() {
+      return `${this.id}_wrapper`;
+    },
+    filteredItems() {
+      const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
+      return this.options!.filter((item) =>
+        this.optionProjection(item).match(regexp)
+      );
+    },
+    isListVisible() {
+      return this.isInputFocused;
+    },
+    currentSelection() {
+      return this.isListVisible &&
+        this.currentSelectionIndex < this.filteredItems.length
+        ? this.filteredItems[this.currentSelectionIndex]
+        : undefined;
+    },
+  },
+  mounted() {
+    if (this.type == "date") {
+      if (this.modelValue.length == 10) {
+        return;
+      }
+      const date = new Date();
+      const result = date.toISOString().split("T")[0];
+      this.updateValue(result);
+    }
+    if (this.type == "range") {
+      setTimeout(() => {
+        this.element = document.getElementById(this.id) as HTMLInputElement;
+        this.setBackgroundSize();
+      }, 1);
+    }
   },
   methods: {
     showPassword() {
@@ -177,7 +265,7 @@ export default defineComponent({
       await this.updateValue(event);
       this.setBackgroundSize();
     },
-    updateValue(event: Event | string) {
+    updateValue(event: Event | string | any) {
       if (this.type == "range") {
         this.setBackgroundSize();
       }
@@ -210,6 +298,98 @@ export default defineComponent({
       const value = +this.element!.value;
       const size = ((value - min) / (max - min)) * 100;
       return size;
+    },
+    onInput(event: Event) {
+      if (
+        this.isListVisible &&
+        this.currentSelectionIndex >= this.filteredItems.length
+      ) {
+        this.currentSelectionIndex = (this.filteredItems.length || 1) - 1;
+      }
+      console.log(event);
+      this.updateValue(event);
+      this.$emit("onInput", {
+        modelValue: this.modelValue,
+        options: this.filteredItems,
+      });
+    },
+    onFocus() {
+      this.isInputFocused = true;
+      this.$emit("onFocus", {
+        modelValue: this.modelValue,
+        options: this.filteredItems,
+      });
+    },
+    onBlur() {
+      this.isInputFocused = false;
+      this.$emit("onBlur", {
+        modelValue: this.modelValue,
+        options: this.filteredItems,
+      });
+    },
+    onArrowDown() {
+      if (
+        this.isListVisible &&
+        this.currentSelectionIndex < this.filteredItems.length - 1
+      ) {
+        this.currentSelectionIndex++;
+      }
+      this.scrollSelectionIntoView();
+    },
+    onArrowUp() {
+      if (this.isListVisible && this.currentSelectionIndex > 0) {
+        this.currentSelectionIndex--;
+      }
+      this.scrollSelectionIntoView();
+    },
+    scrollSelectionIntoView() {
+      setTimeout(() => {
+        const list_node = document.querySelector(
+          `#${this.wrapperId} .simple-typeahead-list`
+        ) as HTMLElement;
+        const active_node = document.querySelector(
+          `#${this.wrapperId} .simple-typeahead-list-item.simple-typeahead-list-item-active`
+        ) as HTMLElement;
+        if (
+          !(
+            active_node!.offsetTop >= list_node.scrollTop &&
+            active_node.offsetTop + active_node.offsetHeight <
+              list_node.scrollTop + list_node.offsetHeight
+          )
+        ) {
+          let scroll_to = 0;
+          if (active_node.offsetTop > list_node.scrollTop) {
+            scroll_to =
+              active_node.offsetTop +
+              active_node.offsetHeight -
+              list_node.offsetHeight;
+          } else if (active_node.offsetTop < list_node.scrollTop) {
+            scroll_to = active_node.offsetTop;
+          }
+          list_node.scrollTo(0, scroll_to);
+        }
+      });
+    },
+    selectCurrentSelection() {
+      if (this.currentSelection) {
+        this.selectItem(this.currentSelection);
+      }
+    },
+    selectItem(item: any) {
+      this.updateValue(this.optionProjection(item));
+      this.currentSelectionIndex = 0;
+      document.getElementById(this.id)!.blur();
+      this.$emit("selectItem", item);
+    },
+    escapeRegExp(string: string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    },
+    boldMatchText(text: string) {
+      const regexp = new RegExp(
+        `(${this.escapeRegExp(this.modelValue)})`,
+        "ig"
+      );
+      return text.replace(regexp, "<strong>$1</strong>");
     },
   },
 });
@@ -435,6 +615,50 @@ export default defineComponent({
   }
   option {
     text-align: start;
+  }
+}
+//select
+.simple-typeahead {
+  position: relative;
+  width: 100%;
+  & > input {
+    margin-bottom: 0;
+  }
+  .simple-typeahead-list {
+    position: absolute;
+    width: 100%;
+    border: none;
+    max-height: 350px;
+    overflow-y: auto;
+    border-bottom: 0.1rem solid #d1d1d1;
+    z-index: 9;
+    .simple-typeahead-list-header {
+      background-color: #fafafa;
+      padding: 0.6rem 1rem;
+      border-bottom: 0.1rem solid #d1d1d1;
+      border-left: 0.1rem solid #d1d1d1;
+      border-right: 0.1rem solid #d1d1d1;
+    }
+    .simple-typeahead-list-footer {
+      background-color: #fafafa;
+      padding: 0.6rem 1rem;
+      border-left: 0.1rem solid #d1d1d1;
+      border-right: 0.1rem solid #d1d1d1;
+    }
+    .simple-typeahead-list-item {
+      cursor: pointer;
+      background-color: #fafafa;
+      padding: 0.6rem 1rem;
+      border-bottom: 0.1rem solid #d1d1d1;
+      border-left: 0.1rem solid #d1d1d1;
+      border-right: 0.1rem solid #d1d1d1;
+    }
+    .simple-typeahead-list-item:last-child {
+      border-bottom: none;
+    }
+    .simple-typeahead-list-item.simple-typeahead-list-item-active {
+      background-color: #e1e1e1;
+    }
   }
 }
 </style>

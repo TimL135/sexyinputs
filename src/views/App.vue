@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-center">
-    <form action="" style="width: 12.5%">
+    <form action="" style="width: 25%">
       <SexyInput
         placeholder="Email"
         type="email"
@@ -36,7 +36,12 @@
         type="select"
         v-model="select"
         :options="array"
-        optionKey="name"
+        :optionProjection="(a) => a.name"
+        @selectItem="
+          (event) => {
+            console.log(event);
+          }
+        "
       ></SexyInput>
       <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
       <SexyInput placeholder="Volume" type="range" v-model="range"></SexyInput>
@@ -47,6 +52,11 @@
 import { defineComponent } from "vue";
 import SexyInput from "@/components/SexyInput.vue";
 export default defineComponent({
+  setup() {
+    return {
+      console,
+    };
+  },
   data() {
     return {
       email: "",
