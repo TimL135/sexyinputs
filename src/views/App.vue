@@ -1,36 +1,25 @@
 <template>
   <div class="d-flex justify-content-center">
     <form action="" style="width: 25%">
-      <SexyInput
-        placeholder="Email"
-        type="email"
-        v-model="email"
-        required
-      ></SexyInput>
+      <SexyInput placeholder="Email" type="email" v-model="email"></SexyInput>
       <SexyInput
         placeholder="Username"
         type="text"
         v-model="username"
-        required
+      ></SexyInput>
+      <SexyInput
+        placeholder="number"
+        type="number"
+        v-model="number"
       ></SexyInput>
       <SexyInput
         placeholder="Password"
         type="password"
         v-model="password"
-        required
       ></SexyInput>
-      <SexyInput
-        placeholder="Date"
-        type="date"
-        v-model="date"
-        required
-      ></SexyInput>
-      <SexyInput
-        placeholder="File"
-        type="file"
-        v-model="file"
-        required
-      ></SexyInput>
+      <SexyInput placeholder="Date" type="date" v-model="date"></SexyInput>
+      <SexyInput placeholder="Time" type="time" v-model="time"></SexyInput>
+      <SexyInput placeholder="File" type="file" v-model="file"></SexyInput>
       <SexyInput
         placeholder="Select"
         type="select"
@@ -42,6 +31,7 @@
             console.log(event);
           }
         "
+        required
       ></SexyInput>
       <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
       <SexyInput placeholder="Volume" type="range" v-model="range"></SexyInput>
@@ -59,6 +49,8 @@ export default defineComponent({
   },
   data() {
     return {
+      number: null,
+      time: "",
       email: "",
       username: "",
       password: "",

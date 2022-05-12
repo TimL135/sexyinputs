@@ -17,11 +17,16 @@
       :list="id2"
       autocomplete="off"
     />
-    <div class="simple-typeahead input-contain" v-if="type == 'select'">
+    <div
+      :id="wrapperId"
+      class="simple-typeahead input-contain"
+      v-if="type == 'select'"
+    >
       <input
         v-bind="$attrs"
         :id="id"
         class="simple-typeahead-input form-control shadow-none"
+        :style="isListVisible ? 'border-radius: 1rem 1rem 0 0' : ''"
         :class="{ dirty: modelValue }"
         type="text"
         :value="modelValue"
@@ -40,7 +45,7 @@
         v-if="isListVisible && type == 'select'"
         class="simple-typeahead-list"
       >
-        <div class="simple-typeahead-list-header" v-if="$slots['list-header']">
+        <div v-if="$slots['list-header']">
           <slot name="list-header"></slot>
         </div>
         <div
@@ -73,7 +78,8 @@
             v-else
           ></span>
         </div>
-        <div class="simple-typeahead-list-footer" v-if="$slots['list-footer']">
+        <div v-if="!filteredItems.length">Kein Element gefunden</div>
+        <div v-if="$slots['list-footer']">
           <slot name="list-footer"></slot>
         </div>
       </div>
@@ -129,23 +135,6 @@
           width="100%"
           height="100%"
           fill="currentColor"
-          class="bi bi-eye"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
-          />
-          <path
-            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
-          />
-        </svg>
-      </template>
-      <template v-else>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          height="100%"
-          fill="currentColor"
           class="bi bi-eye-slash"
           viewBox="0 0 16 16"
         >
@@ -157,6 +146,23 @@
           />
           <path
             d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"
+          />
+        </svg>
+      </template>
+      <template v-else>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          height="100%"
+          fill="currentColor"
+          class="bi bi-eye"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+          />
+          <path
+            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
           />
         </svg>
       </template>
@@ -223,18 +229,22 @@ export default defineComponent({
   },
   computed: {
     wrapperId() {
+      if (this.type != "select") return;
       return `${this.id}_wrapper`;
     },
     filteredItems() {
+      if (this.type != "select") return;
       const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
       return this.options!.filter((item) =>
         this.optionProjection(item).match(regexp)
       );
     },
     isListVisible() {
+      if (this.type != "select") return;
       return this.isInputFocused;
     },
     currentSelection() {
+      if (this.type != "select") return;
       return this.isListVisible &&
         this.currentSelectionIndex < this.filteredItems.length
         ? this.filteredItems[this.currentSelectionIndex]
@@ -249,6 +259,14 @@ export default defineComponent({
       const date = new Date();
       const result = date.toISOString().split("T")[0];
       this.updateValue(result);
+    }
+    if (this.type == "time") {
+      const date = new Date();
+      let time =
+        ("0" + date.getHours()).slice(-2) +
+        ":" +
+        ("0" + date.getMinutes()).slice(-2);
+      this.updateValue(time);
     }
     if (this.type == "range") {
       setTimeout(() => {
@@ -306,7 +324,6 @@ export default defineComponent({
       ) {
         this.currentSelectionIndex = (this.filteredItems.length || 1) - 1;
       }
-      console.log(event);
       this.updateValue(event);
       this.$emit("onInput", {
         modelValue: this.modelValue,
@@ -322,6 +339,11 @@ export default defineComponent({
     },
     onBlur() {
       this.isInputFocused = false;
+      if (
+        !this.options?.some((e) => this.optionProjection(e) == this.modelValue)
+      )
+        this.updateValue("");
+      if (!this.filteredItems.length) this.updateValue("");
       this.$emit("onBlur", {
         modelValue: this.modelValue,
         options: this.filteredItems,
@@ -375,8 +397,8 @@ export default defineComponent({
         this.selectItem(this.currentSelection);
       }
     },
-    selectItem(item: any) {
-      this.updateValue(this.optionProjection(item));
+    async selectItem(item: any) {
+      await this.updateValue(this.optionProjection(item));
       this.currentSelectionIndex = 0;
       document.getElementById(this.id)!.blur();
       this.$emit("selectItem", item);
@@ -424,12 +446,32 @@ export default defineComponent({
       }
     }
   }
+  input[type="number"] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+  input[type="range"] + label + input[type="number"] {
+    padding: 0;
+    text-align: center;
+  }
+
   input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
     border-radius: 1rem 0 0 1rem;
     width: 80%;
     cursor: pointer;
+    &::-moz-range-track {
+      height: 0.2rem;
+      background: linear-gradient(to right, #293043, #293043), #d7d7d7;
+      background-size: var(--background-size, 0%) 100%;
+      background-repeat: no-repeat;
+      border-radius: 5px;
+    }
     &::-webkit-slider-runnable-track {
       height: 0.2rem;
       background: linear-gradient(to right, #293043, #293043), #d7d7d7;
@@ -448,13 +490,26 @@ export default defineComponent({
       margin-top: -0.4rem;
       box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
     }
+    &::-moz-range-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 1rem;
+      height: 1rem;
+      background: #293043;
+      border: 1px white solid;
+      border-radius: 50%;
+      margin-top: -0.4rem;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    }
   }
   input[type="select"] {
     &::-webkit-calendar-picker-indicator {
       opacity: 0;
     }
   }
-  input[type="date"] {
+
+  input[type="date"],
+  input[type="time"] {
     &::-webkit-calendar-picker-indicator {
       display: flex;
       justify-content: end;
@@ -472,15 +527,7 @@ export default defineComponent({
       padding: 0.3rem;
     }
   }
-  input[type="number"] {
-    padding: 0;
-    text-align: center;
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-  }
+
   button {
     align-items: center;
     position: absolute;
@@ -490,6 +537,7 @@ export default defineComponent({
     right: 0;
     width: 20%;
     border-radius: 0 1rem 1rem 0;
+    border-color: #001;
     border-left: none;
     display: flex;
     background-color: transparent;
@@ -556,17 +604,16 @@ export default defineComponent({
       font-size: 1.4rem; //input fontsize
       padding: 1rem 1.2rem;
     }
-  }
-
-  textarea:focus {
-    outline: none;
-    border-color: var(--navbarColor1);
-    & + .placeholder-text .text {
-      background-color: white;
-      font-size: 1.1rem;
-      transform: translate(0, -50%);
+    &:focus {
+      outline: none;
       border-color: var(--navbarColor1);
-      color: var(--navbarColor1);
+      & + .placeholder-text .text {
+        background-color: white;
+        font-size: 1.1rem;
+        transform: translate(0, -50%);
+        border-color: var(--navbarColor1);
+        color: var(--navbarColor1);
+      }
     }
   }
   .placeholder-text {
@@ -585,7 +632,6 @@ export default defineComponent({
       padding: 0 0.5rem;
       margin: 0.6rem 1rem;
       transform: translate(0);
-      color: gray;
       transition: transform 0.15s ease-out, font-size 0.15s ease-out,
         background-color 0.2s ease-out, color 0.15s ease-out;
     }
@@ -609,13 +655,6 @@ export default defineComponent({
       border-right: 2px solid #001;
     }
   }
-  textarea:focus + .placeholder-text .text {
-    border-color: var(--navbarColor1);
-    color: var(--navbarColor1);
-  }
-  option {
-    text-align: start;
-  }
 }
 //select
 .simple-typeahead {
@@ -627,37 +666,21 @@ export default defineComponent({
   .simple-typeahead-list {
     position: absolute;
     width: 100%;
-    border: none;
     max-height: 350px;
     overflow-y: auto;
-    border-bottom: 0.1rem solid #d1d1d1;
-    z-index: 9;
-    .simple-typeahead-list-header {
-      background-color: #fafafa;
-      padding: 0.6rem 1rem;
-      border-bottom: 0.1rem solid #d1d1d1;
-      border-left: 0.1rem solid #d1d1d1;
-      border-right: 0.1rem solid #d1d1d1;
-    }
-    .simple-typeahead-list-footer {
-      background-color: #fafafa;
-      padding: 0.6rem 1rem;
-      border-left: 0.1rem solid #d1d1d1;
-      border-right: 0.1rem solid #d1d1d1;
-    }
+    border: 0.1rem solid #d1d1d1;
+    background-color: #fafafa;
+    border-radius: 0 0 1rem 1rem;
+    border: 2px solid black;
+    border-top: none;
+    z-index: 1;
+    cursor: pointer;
     .simple-typeahead-list-item {
-      cursor: pointer;
-      background-color: #fafafa;
-      padding: 0.6rem 1rem;
       border-bottom: 0.1rem solid #d1d1d1;
-      border-left: 0.1rem solid #d1d1d1;
-      border-right: 0.1rem solid #d1d1d1;
-    }
-    .simple-typeahead-list-item:last-child {
-      border-bottom: none;
-    }
-    .simple-typeahead-list-item.simple-typeahead-list-item-active {
-      background-color: #e1e1e1;
+      padding: 0.6rem 1rem;
+      &.simple-typeahead-list-item-active {
+        background-color: #e1e1e1;
+      }
     }
   }
 }
