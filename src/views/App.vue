@@ -31,6 +31,21 @@
             console.log(event);
           }
         "
+        sideInputType="text"
+        sideInputMaxLength="1"
+        :sideInputVModel="key"
+        :sideInputOnInput="
+          () => {
+            this.value = this.value
+              .replace(/[^a-z0-9]/g, '')
+              .replace(/(\..*)\./g, '$1');
+          }
+        "
+        @update:sideInputVModel="
+          (v) => {
+            key = v;
+          }
+        "
         required
       ></SexyInput>
       <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
@@ -49,6 +64,7 @@ export default defineComponent({
   },
   data() {
     return {
+      key: "",
       number: null,
       time: "",
       email: "",

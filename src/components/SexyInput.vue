@@ -9,7 +9,7 @@
       @input="updateValue"
       :class="[{ dirty: modelValue }, type == 'range' ? 'pe-4' : '']"
       :style="
-        btnText || type == 'password'
+        btnText || type == 'password' || sideInputType
           ? 'border-radius: 1rem 0 0 1rem; width:80%'
           : ''
       "
@@ -26,7 +26,12 @@
         v-bind="$attrs"
         :id="id"
         class="simple-typeahead-input form-control shadow-none"
-        :style="isListVisible ? 'border-radius: 1rem 1rem 0 0' : ''"
+        :style="[
+          btnText || sideInputType
+            ? 'border-radius: 1rem 0 0 1rem; width:80%'
+            : '',
+          isListVisible ? 'border-radius: 1rem 0 0 0' : '',
+        ]"
         :class="{ dirty: modelValue }"
         type="text"
         :value="modelValue"
@@ -39,11 +44,12 @@
         autocomplete="off"
       />
       <label class="placeholder-text">
-        <div class="text">{{ placeholder }}</div>
+        <div class="text" :style="labelStyle">{{ placeholder }}</div>
       </label>
       <div
         v-if="isListVisible && type == 'select'"
         class="simple-typeahead-list"
+        :style="[btnText || sideInputType ? ' width:80%' : '']"
       >
         <div v-if="$slots['list-header']">
           <slot name="list-header"></slot>
@@ -95,30 +101,25 @@
     ></textarea>
 
     <label class="placeholder-text" v-if="type != 'select'">
-      <div class="text">{{ placeholder }}</div>
+      <div class="text" :style="labelStyle">{{ placeholder }}</div>
     </label>
-
+    <input
+      v-if="sideInputType"
+      class="sideInput"
+      :type="sideInputType"
+      :style="sideInputStyle"
+      :maxlength="sideInputMaxLength"
+      @input="updateSideValue"
+      :value="sideInputVModel"
+    />
     <input
       type="number"
+      class="sideInput"
       @input="inputNumber"
       :value="modelValue"
       v-if="type == 'range'"
       min="0"
       max="100"
-      style="
-        align-items: center;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 80%;
-        right: 0;
-        width: 20%;
-        border-radius: 0 1rem 1rem 0;
-        border-left: none;
-        display: flex;
-        background-color: transparent;
-        justify-content: center;
-      "
     />
     <button v-if="btnText" type="button" @click="affirm()" :class="btnClass">
       {{ btnText }}
@@ -196,6 +197,27 @@ export default defineComponent({
     btnClass: {
       type: String,
     },
+    sideInputType: {
+      type: String,
+    },
+    sideInputStyle: {
+      type: String,
+    },
+    sideInputMaxLength: {
+      type: String,
+    },
+    sideInputOnInput: {
+      type: Function,
+      default: () => {
+        return;
+      },
+    },
+    sideInputVModel: {
+      type: String,
+    },
+    labelStyle: {
+      type: String,
+    },
     btnAction: {
       type: Function,
     },
@@ -229,22 +251,18 @@ export default defineComponent({
   },
   computed: {
     wrapperId() {
-      if (this.type != "select") return;
       return `${this.id}_wrapper`;
     },
     filteredItems() {
-      if (this.type != "select") return;
       const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
       return this.options!.filter((item) =>
         this.optionProjection(item).match(regexp)
       );
     },
     isListVisible() {
-      if (this.type != "select") return;
       return this.isInputFocused;
     },
     currentSelection() {
-      if (this.type != "select") return;
       return this.isListVisible &&
         this.currentSelectionIndex < this.filteredItems.length
         ? this.filteredItems[this.currentSelectionIndex]
@@ -296,6 +314,11 @@ export default defineComponent({
         // @ts-ignore
         this.$emit("update:modelValue", event.target.value);
       }
+    },
+    updateSideValue(event: Event | string | any) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this.$emit("update:sideInputVModel", event.target.value);
     },
     async affirm() {
       try {
@@ -420,7 +443,7 @@ export default defineComponent({
 //material inputs
 .input-contain {
   position: relative;
-
+  border-radius: 1rem;
   input {
     text-align: start;
     padding-left: 1.5rem;
@@ -527,10 +550,12 @@ export default defineComponent({
       padding: 0.3rem;
     }
   }
-
-  button {
+  button,
+  input.sideInput {
     align-items: center;
+    text-align: center;
     position: absolute;
+    padding: 0;
     top: 0;
     bottom: 0;
     left: 80%;
