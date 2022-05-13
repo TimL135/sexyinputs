@@ -1,7 +1,7 @@
 <template>
   <div class="input-contain mt-3 shadow-none">
     <div class="">
-      <div v-if="error" class="error">
+      <div v-if="error && !isListVisible" class="error">
         {{ error }}
       </div>
     </div>
@@ -166,8 +166,8 @@
       <template v-if="!viewPassword">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="85%"
-          height="85%"
+          width="70%"
+          height="70%"
           fill="currentColor"
           class="bi bi-eye-slash"
           viewBox="0 0 16 16"
@@ -186,8 +186,8 @@
       <template v-else>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="85%"
-          height="85%"
+          width="70%"
+          height="70%"
           fill="currentColor"
           class="bi bi-eye"
           viewBox="0 0 14 16"
@@ -329,9 +329,11 @@ export default defineComponent({
         : undefined;
     },
     borderColorComputed() {
+      //determines the color of the border
       return this.error ? this.errorColor : this.borderColor;
     },
     rangeTrackSize() {
+      //determines the marked area of rangeInput
       if (!this.element) return "0%";
       const min = +this.element!.min || 0;
       const max = +this.element!.max || 100;
@@ -547,7 +549,8 @@ export default defineComponent({
     background-color: white;
     color: red;
     position: absolute;
-    top: 80%;
+    z-index: 1;
+    top: 75%;
     left: 5%;
   }
   input {
@@ -644,8 +647,8 @@ export default defineComponent({
       display: flex;
       justify-content: end;
       cursor: pointer;
-      height: 2.5rem;
-      width: 2.5rem;
+      height: 2rem;
+      width: 2rem;
       margin-bottom: 0.5rem;
     }
   }
@@ -805,18 +808,22 @@ export default defineComponent({
     width: 100%;
     max-height: 350px;
     overflow-y: auto;
-    border: 0.1rem solid black;
     background-color: #fafafa;
     border-radius: 0 0 0.5rem 0.5rem;
-    border: 1px solid black;
+    border: 1px solid;
+    border-color: v-bind(borderColorComputed);
     border-top: none;
     z-index: 1;
     cursor: pointer;
     .simple-typeahead-list-item {
-      border-bottom: 0.1rem solid black;
+      border-bottom: 1px solid;
+      border-color: v-bind(borderColorComputed);
       padding: 0.6rem 1rem;
       &.simple-typeahead-list-item-active {
         background-color: #e1e1e1;
+      }
+      &:last-child {
+        border-bottom: none;
       }
     }
   }

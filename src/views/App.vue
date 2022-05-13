@@ -32,6 +32,7 @@
         placeholder="Select"
         type="select"
         v-model="select"
+        :error="errors.select"
         :options="array"
         :optionProjection="(a:any) => a.name"
         @selectItem="
@@ -93,10 +94,14 @@ export default defineComponent({
   },
   methods: {
     login() {
+      this.errors = {};
       if (!this.email)
         Object.assign(this.errors, { email: "bitte Feld ausfüllen" });
       if (!this.password)
         Object.assign(this.errors, { password: "bitte Feld ausfüllen" });
+      if (!this.select)
+        Object.assign(this.errors, { select: "bitte Feld ausfüllen" });
+      if (!Object.keys(this.errors).length) this.console.log("login");
     },
   },
 });
