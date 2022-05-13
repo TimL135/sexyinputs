@@ -1,5 +1,10 @@
 <template>
   <div class="input-contain mt-3 shadow-none">
+    <div class="">
+      <div v-if="error" class="error">
+        {{ error }}
+      </div>
+    </div>
     <!-- standard input field -->
     <input
       v-if="type != 'textarea' && type != 'select'"
@@ -278,6 +283,17 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    error: {
+      type: String,
+    },
+    borderColor: {
+      type: String,
+      default: "black",
+    },
+    errorColor: {
+      type: String,
+      default: "red",
+    },
   },
   data() {
     return {
@@ -312,6 +328,17 @@ export default defineComponent({
         ? this.filteredItems[this.currentSelectionIndex]
         : undefined;
     },
+    borderColorComputed() {
+      return this.error ? this.errorColor : this.borderColor;
+    },
+    rangeTrackSize() {
+      if (!this.element) return "0%";
+      const min = +this.element!.min || 0;
+      const max = +this.element!.max || 100;
+      const value = parseInt(this.modelValue);
+      const size = ((value - min) / (max - min)) * 100;
+      return size + "%";
+    },
   },
   mounted() {
     if (this.type == "date") {
@@ -342,7 +369,6 @@ export default defineComponent({
       //set Element to standardInput and sets the background in the range input
       setTimeout(() => {
         this.element = document.getElementById(this.id) as HTMLInputElement;
-        this.setBackgroundSize();
       }, 1);
     }
   },
@@ -354,19 +380,17 @@ export default defineComponent({
     async inputNumber(event: Event) {
       //enables the sideInput during rangeInput
       await this.updateValue(event);
-      this.setBackgroundSize();
     },
     updateValue(event: Event | string | any) {
       //correct the value if necessary and update it
       if (this.controlInput) {
         if (this.type == "range") {
-          this.setBackgroundSize();
           let inputValue = parseInt(event.target.value);
           if (inputValue > (this.element.max || 100))
             inputValue = parseInt(this.element.max) || 100;
           if (inputValue < (this.element.min || 0))
             inputValue = parseInt(this.element.min) || 0;
-
+          if (isNaN(inputValue)) inputValue = 0;
           this.$emit("update:modelValue", inputValue);
           return;
         }
@@ -394,21 +418,6 @@ export default defineComponent({
       } catch {
         return;
       }
-    },
-    setBackgroundSize() {
-      //sets the background in the range input
-      this.element?.style.setProperty(
-        "--background-size",
-        `${this.getBackgroundSize()}%`
-      );
-    },
-    getBackgroundSize() {
-      //calculates how much of the rangeInput is marked
-      const min = +this.element!.min || 0;
-      const max = +this.element!.max || 100;
-      const value = +this.element!.value;
-      const size = ((value - min) / (max - min)) * 100;
-      return size;
     },
     onInput(event: Event) {
       //is executed when something is entered in selectInput.
@@ -533,6 +542,14 @@ export default defineComponent({
 .input-contain {
   position: relative;
   border-radius: 0.5rem;
+  .error {
+    width: 30%;
+    background-color: white;
+    color: red;
+    position: absolute;
+    top: 80%;
+    left: 5%;
+  }
   input {
     text-align: start;
     padding-left: 1.5rem;
@@ -540,7 +557,8 @@ export default defineComponent({
     height: 3.5rem;
     width: 100%;
     line-height: 4rem;
-    border: 1px solid black;
+    border: 1px solid;
+    border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
     .placeholder-text {
       font-size: 1.4rem; //input fontsize
@@ -548,12 +566,12 @@ export default defineComponent({
     }
     &:focus {
       outline: none;
-      border-color: var(--navbarColor1);
+      border-color: v-bind(borderColorComputed);
       & + .placeholder-text .text {
         background-color: white;
         font-size: 1.1rem;
         transform: translate(0, -100%);
-        border-color: var(--navbarColor1);
+        border-color: v-bind(borderColorComputed);
         color: var(--navbarColor1);
       }
     }
@@ -587,7 +605,7 @@ export default defineComponent({
     &::-webkit-slider-runnable-track {
       height: 0.2rem;
       background: linear-gradient(to right, #293043, #293043), #d7d7d7;
-      background-size: var(--background-size, 0%) 100%;
+      background-size: v-bind(rangeTrackSize);
       background-repeat: no-repeat;
       border-radius: 5px;
     }
@@ -653,7 +671,7 @@ export default defineComponent({
     width: 20%;
     border-radius: 0 0.5rem 0.5rem 0;
     border-width: 1px;
-    border-color: #001;
+    border-color: v-bind(borderColorComputed);
     border-left: none;
     display: flex;
     background-color: white;
@@ -697,9 +715,10 @@ export default defineComponent({
       width: 100%;
       border-radius: 0.5rem 0.5rem 0rem 0rem;
       height: 45%;
-      border-top: 1px solid black;
-      border-left: 1px solid #001;
-      border-right: 1px solid #001;
+      border-top: 1px solid;
+      border-left: 1px solid;
+      border-right: 1px solid;
+      border-color: v-bind(borderColorComputed);
     }
   }
   input:focus + .placeholder-text .text {
@@ -712,7 +731,8 @@ export default defineComponent({
     padding-left: 1.5rem;
     min-height: 3.5rem;
     width: 100%;
-    border: 1px solid black;
+    border: 1px solid;
+    border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
     padding-top: 1rem;
     text-shadow: none;
@@ -766,9 +786,10 @@ export default defineComponent({
       width: 100%;
       border-radius: 0.5rem 0.5rem 0rem 0rem;
       height: 51%;
-      border-top: 1px solid black;
-      border-left: 1px solid #001;
-      border-right: 1px solid #001;
+      border-top: 1px solid;
+      border-left: 1px solid;
+      border-right: 1px solid;
+      border-color: v-bind(borderColorComputed);
     }
   }
 }

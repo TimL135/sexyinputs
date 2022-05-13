@@ -1,27 +1,29 @@
 <template>
   <div class="d-flex justify-content-center">
-    <form action="" style="width: 12.5%">
+    <form action="" style="width: 25%" @submit.prevent="login">
       <SexyInput
         placeholder="Email"
         type="email"
         v-model="email"
         :labelBorder="true"
-      ></SexyInput>
-      <SexyInput
-        placeholder="Username"
-        type="text"
-        v-model="username"
-        required
-      ></SexyInput>
-      <SexyInput
-        placeholder="number"
-        type="number"
-        v-model="number"
+        :error="errors.email"
       ></SexyInput>
       <SexyInput
         placeholder="Password"
         type="password"
         v-model="password"
+        :error="errors.password"
+      ></SexyInput>
+      <button class="mt-3">login</button>
+      <SexyInput
+        placeholder="Username"
+        type="text"
+        v-model="username"
+      ></SexyInput>
+      <SexyInput
+        placeholder="number"
+        type="number"
+        v-model="number"
       ></SexyInput>
       <SexyInput placeholder="Date" type="date" v-model="date"></SexyInput>
       <SexyInput placeholder="Time" type="time" v-model="time"></SexyInput>
@@ -54,7 +56,6 @@
             key = v;
           }
         "
-        required
       ></SexyInput>
       <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
       <SexyInput placeholder="Volume" type="range" v-model="range"></SexyInput>
@@ -84,12 +85,20 @@ export default defineComponent({
       range: 0,
       array: [{ name: "hello" }, { name: "hallo" }],
       text: "",
+      errors: {},
     };
   },
   components: {
     SexyInput,
   },
-  methods: {},
+  methods: {
+    login() {
+      if (!this.email)
+        Object.assign(this.errors, { email: "bitte Feld ausfüllen" });
+      if (!this.password)
+        Object.assign(this.errors, { password: "bitte Feld ausfüllen" });
+    },
+  },
 });
 </script>
 <style lang="scss">
