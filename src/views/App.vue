@@ -1,11 +1,17 @@
 <template>
   <div class="d-flex justify-content-center">
-    <form action="" style="width: 25%">
-      <SexyInput placeholder="Email" type="email" v-model="email"></SexyInput>
+    <form action="" style="width: 12.5%">
+      <SexyInput
+        placeholder="Email"
+        type="email"
+        v-model="email"
+        :labelBorder="true"
+      ></SexyInput>
       <SexyInput
         placeholder="Username"
         type="text"
         v-model="username"
+        required
       ></SexyInput>
       <SexyInput
         placeholder="number"
@@ -25,12 +31,14 @@
         type="select"
         v-model="select"
         :options="array"
-        :optionProjection="(a) => a.name"
+        :optionProjection="(a:any) => a.name"
         @selectItem="
           (event) => {
             console.log(event);
           }
         "
+        :selectOnBlur="true"
+        :controlInput="true"
         sideInputType="text"
         sideInputMaxLength="1"
         :sideInputVModel="key"

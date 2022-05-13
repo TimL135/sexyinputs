@@ -1,5 +1,6 @@
 <template>
   <div class="input-contain mt-3 shadow-none">
+    <!-- standard input field -->
     <input
       v-if="type != 'textarea' && type != 'select'"
       v-bind="$attrs"
@@ -10,13 +11,15 @@
       :class="[{ dirty: modelValue }, type == 'range' ? 'pe-4' : '']"
       :style="
         btnText || type == 'password' || sideInputType
-          ? 'border-radius: 1rem 0 0 1rem; width:80%'
+          ? 'border-radius: 0.5rem 0 0 0.5rem; width:80%'
           : ''
       "
       :id="id"
       :list="id2"
       autocomplete="off"
     />
+    <!-- /standard input field -->
+    <!-- options for datalist -->
     <div
       :id="wrapperId"
       class="simple-typeahead input-contain"
@@ -28,9 +31,9 @@
         class="simple-typeahead-input form-control shadow-none"
         :style="[
           btnText || sideInputType
-            ? 'border-radius: 1rem 0 0 1rem; width:80%'
+            ? 'border-radius: 0.5rem 0 0 0.5rem; width:80%'
             : '',
-          isListVisible ? 'border-radius: 1rem 0 0 0' : '',
+          isListVisible ? 'border-radius: 0.5rem 0 0 0' : '',
         ]"
         :class="{ dirty: modelValue }"
         type="text"
@@ -43,9 +46,17 @@
         @keydown.enter.tab.prevent="selectCurrentSelection"
         autocomplete="off"
       />
+      <!-- label for select -->
       <label class="placeholder-text">
-        <div class="text" :style="labelStyle">{{ placeholder }}</div>
+        <div
+          class="text"
+          :style="labelStyle"
+          :class="{ withBorder: labelBorder }"
+        >
+          {{ placeholder }}
+        </div>
       </label>
+      <!-- /label for select -->
       <div
         v-if="isListVisible && type == 'select'"
         class="simple-typeahead-list"
@@ -90,6 +101,8 @@
         </div>
       </div>
     </div>
+    <!-- /options for datalist -->
+    <!-- standard textarea field -->
     <textarea
       v-if="type == 'textarea'"
       v-bind="$attrs"
@@ -99,10 +112,19 @@
       :class="{ dirty: modelValue }"
       rows="3"
     ></textarea>
-
+    <!-- /standard textarea field -->
+    <!-- label for select -->
     <label class="placeholder-text" v-if="type != 'select'">
-      <div class="text" :style="labelStyle">{{ placeholder }}</div>
+      <div
+        class="text"
+        :style="labelStyle"
+        :class="{ withBorder: labelBorder }"
+      >
+        {{ placeholder }}
+      </div>
     </label>
+    <!-- /label for select -->
+    <!-- sideInput -->
     <input
       v-if="sideInputType"
       class="sideInput"
@@ -112,6 +134,8 @@
       @input="updateSideValue"
       :value="sideInputVModel"
     />
+    <!-- /sideInput -->
+    <!-- sideInput for rangeInput -->
     <input
       type="number"
       class="sideInput"
@@ -121,9 +145,13 @@
       min="0"
       max="100"
     />
+    <!-- /sideInput for rangeInput -->
+    <!-- sideButton -->
     <button v-if="btnText" type="button" @click="affirm()" :class="btnClass">
       {{ btnText }}
     </button>
+    <!-- /sideButton -->
+    <!-- sideButton for passwordInput -->
     <button
       v-if="type == 'password'"
       type="button"
@@ -133,8 +161,8 @@
       <template v-if="!viewPassword">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          height="100%"
+          width="85%"
+          height="85%"
           fill="currentColor"
           class="bi bi-eye-slash"
           viewBox="0 0 16 16"
@@ -153,11 +181,11 @@
       <template v-else>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          height="100%"
+          width="85%"
+          height="85%"
           fill="currentColor"
           class="bi bi-eye"
-          viewBox="0 0 16 16"
+          viewBox="0 0 14 16"
         >
           <path
             d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
@@ -168,23 +196,24 @@
         </svg>
       </template>
     </button>
+    <!-- /sideButton for passwordInput -->
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+
 export default defineComponent({
   setup() {
     return;
   },
-
   props: {
     placeholder: {
-      type: String,
+      type: String as any,
       required: true,
     },
     modelValue: {
-      type: String || Number || Object,
+      type: String,
       required: true,
     },
     type: {
@@ -218,6 +247,10 @@ export default defineComponent({
     labelStyle: {
       type: String,
     },
+    labelBorder: {
+      type: Boolean,
+      default: false,
+    },
     btnAction: {
       type: Function,
     },
@@ -237,32 +270,43 @@ export default defineComponent({
         return prop >= 0;
       },
     },
+    controlInput: {
+      type: Boolean,
+      default: true,
+    },
+    selectOnBlur: {
+      type: Boolean,
+      default: false,
+    },
   },
-
   data() {
     return {
-      id: "input" + Math.random(),
-      id2: "list" + Math.random(),
+      id: "input" + Math.random(), //id for the standard input field
+      id2: "list" + Math.random(), //id for the datalist
       viewPassword: false,
-      element: null as unknown as HTMLInputElement,
-      isInputFocused: false,
-      currentSelectionIndex: 0,
+      element: null as unknown as HTMLInputElement, //the standard element
+      isInputFocused: false, //checked if the select Input is focus
+      currentSelectionIndex: 0, //the index of the selected option in datalist
     };
   },
   computed: {
     wrapperId() {
+      //the id for the div around the datalist
       return `${this.id}_wrapper`;
     },
     filteredItems() {
+      //options that are still possible
       const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
       return this.options!.filter((item) =>
         this.optionProjection(item).match(regexp)
       );
     },
     isListVisible() {
+      //make the datalist Visible
       return this.isInputFocused;
     },
     currentSelection() {
+      //the option which is currently selected
       return this.isListVisible &&
         this.currentSelectionIndex < this.filteredItems.length
         ? this.filteredItems[this.currentSelectionIndex]
@@ -271,7 +315,9 @@ export default defineComponent({
   },
   mounted() {
     if (this.type == "date") {
+      //set standard value to today
       if (this.modelValue.length == 10) {
+        //return when standard value is set
         return;
       }
       const date = new Date();
@@ -279,6 +325,11 @@ export default defineComponent({
       this.updateValue(result);
     }
     if (this.type == "time") {
+      //set standard value to current time
+      if (this.modelValue.length == 5) {
+        //return when standard value is set
+        return;
+      }
       const date = new Date();
       let time =
         ("0" + date.getHours()).slice(-2) +
@@ -286,7 +337,9 @@ export default defineComponent({
         ("0" + date.getMinutes()).slice(-2);
       this.updateValue(time);
     }
+
     if (this.type == "range") {
+      //set Element to standardInput and sets the background in the range input
       setTimeout(() => {
         this.element = document.getElementById(this.id) as HTMLInputElement;
         this.setBackgroundSize();
@@ -295,15 +348,28 @@ export default defineComponent({
   },
   methods: {
     showPassword() {
+      //makes password visible/invisible
       this.viewPassword = !this.viewPassword;
     },
     async inputNumber(event: Event) {
+      //enables the sideInput during rangeInput
       await this.updateValue(event);
       this.setBackgroundSize();
     },
     updateValue(event: Event | string | any) {
-      if (this.type == "range") {
-        this.setBackgroundSize();
+      //correct the value if necessary and update it
+      if (this.controlInput) {
+        if (this.type == "range") {
+          this.setBackgroundSize();
+          let inputValue = parseInt(event.target.value);
+          if (inputValue > (this.element.max || 100))
+            inputValue = parseInt(this.element.max) || 100;
+          if (inputValue < (this.element.min || 0))
+            inputValue = parseInt(this.element.min) || 0;
+
+          this.$emit("update:modelValue", inputValue);
+          return;
+        }
       }
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -316,11 +382,13 @@ export default defineComponent({
       }
     },
     updateSideValue(event: Event | string | any) {
+      //update the sideInput value
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       this.$emit("update:sideInputVModel", event.target.value);
     },
     async affirm() {
+      //executes the btnAction
       try {
         if (this.btnAction) await this.btnAction();
       } catch {
@@ -328,12 +396,14 @@ export default defineComponent({
       }
     },
     setBackgroundSize() {
+      //sets the background in the range input
       this.element?.style.setProperty(
         "--background-size",
         `${this.getBackgroundSize()}%`
       );
     },
     getBackgroundSize() {
+      //calculates how much of the rangeInput is marked
       const min = +this.element!.min || 0;
       const max = +this.element!.max || 100;
       const value = +this.element!.value;
@@ -341,6 +411,7 @@ export default defineComponent({
       return size;
     },
     onInput(event: Event) {
+      //is executed when something is entered in selectInput.
       if (
         this.isListVisible &&
         this.currentSelectionIndex >= this.filteredItems.length
@@ -354,6 +425,7 @@ export default defineComponent({
       });
     },
     onFocus() {
+      //is executed when the selectInput is focussed
       this.isInputFocused = true;
       this.$emit("onFocus", {
         modelValue: this.modelValue,
@@ -361,18 +433,36 @@ export default defineComponent({
       });
     },
     onBlur() {
+      //is executed when the selectInput is no longer focused
       this.isInputFocused = false;
-      if (
-        !this.options?.some((e) => this.optionProjection(e) == this.modelValue)
-      )
-        this.updateValue("");
-      if (!this.filteredItems.length) this.updateValue("");
+      if (this.controlInput) {
+        if (
+          !this.options?.some(
+            (e) => this.optionProjection(e) == this.modelValue
+          )
+        )
+          this.updateValue("");
+      }
+      if (this.selectOnBlur) {
+        this.$emit(
+          "selectItem",
+          this.options?.find((e) => this.optionProjection(e) == this.modelValue)
+        );
+      }
       this.$emit("onBlur", {
         modelValue: this.modelValue,
         options: this.filteredItems,
       });
     },
+    onArrowUp() {
+      //pressing the arrow key up selects the upperlying option in the datalist
+      if (this.isListVisible && this.currentSelectionIndex > 0) {
+        this.currentSelectionIndex--;
+      }
+      this.scrollSelectionIntoView();
+    },
     onArrowDown() {
+      //pressing the arrow key down selects the underlying option in the datalist
       if (
         this.isListVisible &&
         this.currentSelectionIndex < this.filteredItems.length - 1
@@ -381,13 +471,8 @@ export default defineComponent({
       }
       this.scrollSelectionIntoView();
     },
-    onArrowUp() {
-      if (this.isListVisible && this.currentSelectionIndex > 0) {
-        this.currentSelectionIndex--;
-      }
-      this.scrollSelectionIntoView();
-    },
     scrollSelectionIntoView() {
+      //makes it possible to scroll the datalist
       setTimeout(() => {
         const list_node = document.querySelector(
           `#${this.wrapperId} .simple-typeahead-list`
@@ -416,20 +501,24 @@ export default defineComponent({
       });
     },
     selectCurrentSelection() {
+      //takes the currently selected option when pressing enter
       if (this.currentSelection) {
         this.selectItem(this.currentSelection);
       }
     },
     async selectItem(item: any) {
+      //will be executed when an option is selected
       await this.updateValue(this.optionProjection(item));
       this.currentSelectionIndex = 0;
       document.getElementById(this.id)!.blur();
       this.$emit("selectItem", item);
     },
     escapeRegExp(string: string) {
+      //filters unwanted characters from a string
       return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     },
     boldMatchText(text: string) {
+      //makes the text you entered in searchInput bold in options
       const regexp = new RegExp(
         `(${this.escapeRegExp(this.modelValue)})`,
         "ig"
@@ -443,7 +532,7 @@ export default defineComponent({
 //material inputs
 .input-contain {
   position: relative;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   input {
     text-align: start;
     padding-left: 1.5rem;
@@ -451,8 +540,8 @@ export default defineComponent({
     height: 3.5rem;
     width: 100%;
     line-height: 4rem;
-    border: 2px solid black;
-    border-radius: 1rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
     .placeholder-text {
       font-size: 1.4rem; //input fontsize
       padding: 0 1.2rem;
@@ -485,7 +574,7 @@ export default defineComponent({
   input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    border-radius: 1rem 0 0 1rem;
+    border-radius: 0.5rem 0 0 0.5rem;
     width: 80%;
     cursor: pointer;
     &::-moz-range-track {
@@ -537,8 +626,8 @@ export default defineComponent({
       display: flex;
       justify-content: end;
       cursor: pointer;
-      height: 3rem;
-      width: 3rem;
+      height: 2.5rem;
+      width: 2.5rem;
       margin-bottom: 0.5rem;
     }
   }
@@ -546,6 +635,7 @@ export default defineComponent({
   input[type="file"] {
     line-height: 1rem;
     &::-webkit-file-upload-button {
+      border: none;
       margin-top: 0.05rem;
       padding: 0.3rem;
     }
@@ -561,11 +651,12 @@ export default defineComponent({
     left: 80%;
     right: 0;
     width: 20%;
-    border-radius: 0 1rem 1rem 0;
+    border-radius: 0 0.5rem 0.5rem 0;
+    border-width: 1px;
     border-color: #001;
     border-left: none;
     display: flex;
-    background-color: transparent;
+    background-color: white;
     justify-content: center;
   }
   input + .placeholder-text {
@@ -585,7 +676,7 @@ export default defineComponent({
       margin: 0 1rem;
       transform: translate(0);
       color: gray;
-      border-radius: 1rem;
+      border-radius: 0.5rem;
       transition: transform 0.15s ease-out, font-size 0.15s ease-out,
         background-color 0.2s ease-out, color 0.15s ease-out;
     }
@@ -595,20 +686,20 @@ export default defineComponent({
   input[type="range"] + .placeholder-text .text,
   input[type="file"] + .placeholder-text .text {
     background-color: white;
-    border-radius: 1rem 1rem 0rem 0rem;
-    font-size: 1.1rem;
+    border-radius: 0.5rem 0.5rem 0rem 0rem;
+    font-size: 0.9rem;
     color: black;
-    transform: translate(0, -100%);
-    &.text:after {
+    transform: translate(0, -120%);
+    &.text.withBorder:after {
       content: "";
       position: absolute;
       left: 0px;
       width: 100%;
-      border-radius: 1rem 1rem 0rem 0rem;
-      height: 50%;
-      border-top: 2px solid black;
-      border-left: 2px solid #001;
-      border-right: 2px solid #001;
+      border-radius: 0.5rem 0.5rem 0rem 0rem;
+      height: 45%;
+      border-top: 1px solid black;
+      border-left: 1px solid #001;
+      border-right: 1px solid #001;
     }
   }
   input:focus + .placeholder-text .text {
@@ -621,8 +712,8 @@ export default defineComponent({
     padding-left: 1.5rem;
     min-height: 3.5rem;
     width: 100%;
-    border: 2px solid black;
-    border-radius: 1rem;
+    border: 1px solid black;
+    border-radius: 0.5rem;
     padding-top: 1rem;
     text-shadow: none;
     .placeholder-text {
@@ -634,7 +725,7 @@ export default defineComponent({
       border-color: var(--navbarColor1);
       & + .placeholder-text .text {
         background-color: white;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         transform: translate(0, -50%);
         border-color: var(--navbarColor1);
         color: var(--navbarColor1);
@@ -664,20 +755,20 @@ export default defineComponent({
   textarea:focus + .placeholder-text .text,
   textarea.dirty + .placeholder-text .text {
     background-color: white;
-    border-radius: 1rem;
-    font-size: 1.1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
     color: black;
-    transform: translate(0, -80%);
-    &.text:after {
+    transform: translate(0, -90%);
+    &.text.withBorder:after {
       content: "";
       position: absolute;
       left: 0px;
       width: 100%;
-      border-radius: 1rem 1rem 0rem 0rem;
-      height: 50%;
-      border-top: 2px solid black;
-      border-left: 2px solid #001;
-      border-right: 2px solid #001;
+      border-radius: 0.5rem 0.5rem 0rem 0rem;
+      height: 51%;
+      border-top: 1px solid black;
+      border-left: 1px solid #001;
+      border-right: 1px solid #001;
     }
   }
 }
@@ -693,15 +784,15 @@ export default defineComponent({
     width: 100%;
     max-height: 350px;
     overflow-y: auto;
-    border: 0.1rem solid #d1d1d1;
+    border: 0.1rem solid black;
     background-color: #fafafa;
-    border-radius: 0 0 1rem 1rem;
-    border: 2px solid black;
+    border-radius: 0 0 0.5rem 0.5rem;
+    border: 1px solid black;
     border-top: none;
     z-index: 1;
     cursor: pointer;
     .simple-typeahead-list-item {
-      border-bottom: 0.1rem solid #d1d1d1;
+      border-bottom: 0.1rem solid black;
       padding: 0.6rem 1rem;
       &.simple-typeahead-list-item-active {
         background-color: #e1e1e1;
