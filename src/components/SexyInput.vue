@@ -69,7 +69,7 @@
         ]"
         :class="{ dirty: modelValue }"
         type="text"
-        :value="modelValue"
+        :value="selectedProjection(modelValue)"
         @input="onInput"
         @focus="onFocus"
         @blur="onBlur"
@@ -127,7 +127,7 @@
             v-else
           ></span>
         </div>
-        <div v-if="!filteredItems.length">Kein Element gefunden</div>
+        <div v-if="!filteredItems.length">{{ noElementMessage }}</div>
         <div v-if="$slots['list-footer']">
           <slot name="list-footer"></slot>
         </div>
@@ -295,12 +295,22 @@ export default defineComponent({
         return item;
       },
     },
+    selectedProjection: {
+      type: Function,
+      default: (item: any) => {
+        return item;
+      },
+    },
     minInputLength: {
       type: Number,
       default: 2,
       validator: (prop: any) => {
         return prop >= 0;
       },
+    },
+    noElementMessage: {
+      type: String,
+      default: "",
     },
     controlInput: {
       type: Boolean,
@@ -626,17 +636,6 @@ export default defineComponent({
       font-size: 1.4rem; //input fontsize
       padding: 0 1rem;
     }
-    &:focus {
-      outline: none;
-      border-color: v-bind(borderColorComputed);
-      & + .placeholder-text .text {
-        background-color: white;
-        font-size: 1.1rem;
-        transform: translate(0, -1rem);
-        border-color: v-bind(borderColorComputed);
-        color: var(--navbarColor1);
-      }
-    }
   }
   input[type="number"] {
     -moz-appearance: textfield;
@@ -774,7 +773,7 @@ export default defineComponent({
     font-size: 0.9rem;
     padding: 0 0.3rem;
     color: black;
-    transform: translate(0, -1.1rem);
+    transform: translate(0, -1.15rem);
     &.text.withBorder:after {
       content: "";
       position: absolute;
