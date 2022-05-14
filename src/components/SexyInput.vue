@@ -1,10 +1,31 @@
 <template>
   <div class="input-contain mt-3 shadow-none">
-    <div class="">
+    <!-- error -->
+    <div>
       <div v-if="error && !isListVisible" class="error">
         {{ error }}
       </div>
     </div>
+    <!-- /error -->
+    <!-- search Icon -->
+    <div
+      v-if="type == 'search' && (isListVisible || modelValue)"
+      class="search"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-search"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+        />
+      </svg>
+    </div>
+    <!-- /search Icon -->
     <!-- standard input field -->
     <input
       v-if="type != 'textarea' && type != 'select'"
@@ -22,7 +43,7 @@
       ]"
       :style="
         btnText || type == 'password' || sideInputType
-          ? 'border-radius: 0.5rem 0 0 0.5rem; width:80%'
+          ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
           : ''
       "
       :id="id"
@@ -42,7 +63,7 @@
         class="simple-typeahead-input form-control shadow-none"
         :style="[
           btnText || sideInputType
-            ? 'border-radius: 0.5rem 0 0 0.5rem; width:80%'
+            ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
             : '',
           isListVisible ? 'border-radius: 0.5rem 0 0 0' : '',
         ]"
@@ -71,7 +92,7 @@
       <div
         v-if="isListVisible && type == 'select'"
         class="simple-typeahead-list"
-        :style="[btnText || sideInputType ? ' width:80%' : '']"
+        :style="[btnText || sideInputType ? `width:${inputWidth}` : '']"
       >
         <div v-if="$slots['list-header']">
           <slot name="list-header"></slot>
@@ -300,6 +321,10 @@ export default defineComponent({
       type: String,
       default: "red",
     },
+    sideWidth: {
+      type: String,
+      default: "20",
+    },
   },
   data() {
     return {
@@ -347,6 +372,18 @@ export default defineComponent({
       const size = ((value - min) / (max - min)) * 100;
       return size + "%";
     },
+    inputWidth() {
+      let width = 100;
+      if (
+        this.type == "range" ||
+        this.type == "password" ||
+        this.sideInputType ||
+        this.btnText
+      ) {
+        width -= parseInt(this.sideWidth);
+      }
+      return width + "%";
+    },
   },
   mounted() {
     if (this.type == "date") {
@@ -372,7 +409,6 @@ export default defineComponent({
         ("0" + date.getMinutes()).slice(-2);
       this.updateValue(time);
     }
-
     if (this.type == "range") {
       //set Element to standardInput and sets the background in the range input
       setTimeout(() => {
@@ -447,6 +483,7 @@ export default defineComponent({
         case "select":
         case "time":
         case "date":
+        case "search":
           this.isInputFocused = true;
           if (this.type != "select") return;
           this.$emit("onFocus", {
@@ -562,19 +599,26 @@ export default defineComponent({
   border-radius: 0.5rem;
   .error {
     background-color: white;
-    color: red;
+    color: v-bind(errorColor);
     position: absolute;
     z-index: 1;
     top: 75%;
     left: 5%;
   }
+  .search {
+    content: "f";
+    background-color: white;
+    position: absolute;
+    z-index: 1;
+    top: 25%;
+    left: 1%;
+  }
   input {
     text-align: start;
     padding-left: 1rem;
-    padding-top: 1rem;
+    padding-top: 0.5rem;
     height: 3.5rem;
     width: 100%;
-    line-height: 4rem;
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
@@ -611,7 +655,7 @@ export default defineComponent({
     -webkit-appearance: none;
     appearance: none;
     border-radius: 0.5rem 0 0 0.5rem;
-    width: 80%;
+    width: v-bind(inputWidth);
     cursor: pointer;
     &::-moz-range-track {
       height: 0.2rem;
@@ -655,7 +699,12 @@ export default defineComponent({
       opacity: 0;
     }
   }
-
+  input[type="search"] {
+    padding-left: 2rem;
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
   input[type="date"],
   input[type="time"] {
     &::-webkit-calendar-picker-indicator {
@@ -669,10 +718,9 @@ export default defineComponent({
   }
 
   input[type="file"] {
-    line-height: 1rem;
     &::-webkit-file-upload-button {
       border: none;
-      margin-top: 0.05rem;
+      margin-top: 0.3rem;
       padding: 0.3rem;
     }
   }
@@ -684,9 +732,9 @@ export default defineComponent({
     padding: 0;
     top: 0;
     bottom: 0;
-    left: 80%;
+    left: v-bind(inputWidth);
     right: 0;
-    width: 20%;
+    width: v-bind(sideWidth);
     border-radius: 0 0.5rem 0.5rem 0;
     border-width: 1px;
     border-color: v-bind(borderColorComputed);

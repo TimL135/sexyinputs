@@ -2,6 +2,12 @@
   <div class="d-flex justify-content-center">
     <form action="" style="width: 25%" @submit.prevent="login">
       <SexyInput
+        placeholder="Search"
+        type="search"
+        v-model="search"
+        :error="errors.search"
+      ></SexyInput>
+      <SexyInput
         placeholder="Email"
         type="email"
         v-model="email"
@@ -103,6 +109,7 @@ export default defineComponent({
       range: 0,
       array: [{ name: "hello" }, { name: "hallo" }],
       text: "",
+      search: "",
       errors: {},
     };
   },
