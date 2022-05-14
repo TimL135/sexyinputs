@@ -13,7 +13,13 @@
       :type="viewPassword ? 'text' : type"
       :value="modelValue"
       @input="updateValue"
-      :class="[{ dirty: modelValue }, type == 'range' ? 'pe-4' : '']"
+      @focus="onFocus"
+      @blur="onBlur"
+      :class="[
+        { dirty: modelValue },
+        type == 'range' ? 'pe-4' : '',
+        error && labelBorder ? 'mt-4' : '',
+      ]"
       :style="
         btnText || type == 'password' || sideInputType
           ? 'border-radius: 0.5rem 0 0 0.5rem; width:80%'
@@ -437,15 +443,25 @@ export default defineComponent({
     },
     onFocus() {
       //is executed when the selectInput is focussed
-      this.isInputFocused = true;
-      this.$emit("onFocus", {
-        modelValue: this.modelValue,
-        options: this.filteredItems,
-      });
+      switch (this.type) {
+        case "select":
+        case "time":
+        case "date":
+          this.isInputFocused = true;
+          if (this.type != "select") return;
+          this.$emit("onFocus", {
+            modelValue: this.modelValue,
+            options: this.filteredItems,
+          });
+          break;
+        default:
+          return;
+      }
     },
     onBlur() {
       //is executed when the selectInput is no longer focused
       this.isInputFocused = false;
+      if (this.type != "select") return;
       if (this.controlInput) {
         if (
           !this.options?.some(
@@ -545,7 +561,6 @@ export default defineComponent({
   position: relative;
   border-radius: 0.5rem;
   .error {
-    width: 30%;
     background-color: white;
     color: red;
     position: absolute;
@@ -555,7 +570,7 @@ export default defineComponent({
   }
   input {
     text-align: start;
-    padding-left: 1.5rem;
+    padding-left: 1rem;
     padding-top: 1rem;
     height: 3.5rem;
     width: 100%;
@@ -565,7 +580,7 @@ export default defineComponent({
     border-radius: 0.5rem;
     .placeholder-text {
       font-size: 1.4rem; //input fontsize
-      padding: 0 1.2rem;
+      padding: 0 1rem;
     }
     &:focus {
       outline: none;
@@ -693,8 +708,8 @@ export default defineComponent({
 
     .text {
       font-size: 1.4rem; // placeholder
-      padding: 0 0.5rem;
-      margin: 0 1rem;
+      padding: 0 0rem;
+      margin: 0 0.6rem;
       transform: translate(0);
       color: gray;
       border-radius: 0.5rem;
@@ -709,6 +724,7 @@ export default defineComponent({
     background-color: white;
     border-radius: 0.5rem 0.5rem 0rem 0rem;
     font-size: 0.9rem;
+    padding: 0 0.3rem;
     color: black;
     transform: translate(0, -120%);
     &.text.withBorder:after {
@@ -731,7 +747,7 @@ export default defineComponent({
 
   textarea {
     text-align: start;
-    padding-left: 1.5rem;
+    padding-left: 1rem;
     min-height: 3.5rem;
     width: 100%;
     border: 1px solid;
@@ -768,8 +784,8 @@ export default defineComponent({
 
     .text {
       font-size: 1.4rem; // placeholder
-      padding: 0 0.5rem;
-      margin: 0.6rem 1rem;
+      padding: 0 0.3rem;
+      margin: 0.6rem 0.2rem;
       transform: translate(0);
       transition: transform 0.15s ease-out, font-size 0.15s ease-out,
         background-color 0.2s ease-out, color 0.15s ease-out;
@@ -779,6 +795,8 @@ export default defineComponent({
   textarea.dirty + .placeholder-text .text {
     background-color: white;
     border-radius: 0.5rem;
+    padding: 0 0.3rem;
+    margin: 0.6rem 0.6rem;
     font-size: 0.9rem;
     color: black;
     transform: translate(0, -90%);

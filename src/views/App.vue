@@ -12,6 +12,8 @@
         placeholder="Password"
         type="password"
         v-model="password"
+        class="mt-4"
+        :labelBorder="true"
         :error="errors.password"
       ></SexyInput>
       <button class="mt-3">login</button>
@@ -25,8 +27,18 @@
         type="number"
         v-model="number"
       ></SexyInput>
-      <SexyInput placeholder="Date" type="date" v-model="date"></SexyInput>
-      <SexyInput placeholder="Time" type="time" v-model="time"></SexyInput>
+      <SexyInput
+        placeholder="Date"
+        type="date"
+        v-model="date"
+        :error="errors.date"
+      ></SexyInput>
+      <SexyInput
+        placeholder="Time"
+        type="time"
+        v-model="time"
+        :error="errors.time"
+      ></SexyInput>
       <SexyInput placeholder="File" type="file" v-model="file"></SexyInput>
       <SexyInput
         placeholder="Select"
@@ -58,7 +70,12 @@
           }
         "
       ></SexyInput>
-      <SexyInput placeholder="Text" type="textarea" v-model="text"></SexyInput>
+      <SexyInput
+        placeholder="Text"
+        type="textarea"
+        v-model="text"
+        :labelBorder="true"
+      ></SexyInput>
       <SexyInput placeholder="Volume" type="range" v-model="range"></SexyInput>
     </form>
   </div>
@@ -91,6 +108,10 @@ export default defineComponent({
   },
   components: {
     SexyInput,
+  },
+  mounted() {
+    Object.assign(this.errors, { date: "dies ist nur ein test fehler" });
+    Object.assign(this.errors, { time: "das auch" });
   },
   methods: {
     login() {
