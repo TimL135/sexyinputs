@@ -602,22 +602,22 @@ export default defineComponent({
     color: v-bind(errorColor);
     position: absolute;
     z-index: 1;
-    top: 75%;
-    left: 5%;
+    top: 1.7rem;
+    left: 1rem;
   }
   .search {
     content: "f";
     background-color: white;
     position: absolute;
     z-index: 1;
-    top: 25%;
-    left: 1%;
+    top: 0.5rem;
+    left: 0.2rem;
   }
   input {
     text-align: start;
     padding-left: 1rem;
     padding-top: 0.5rem;
-    height: 3.5rem;
+    height: 2.5rem;
     width: 100%;
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
@@ -632,7 +632,7 @@ export default defineComponent({
       & + .placeholder-text .text {
         background-color: white;
         font-size: 1.1rem;
-        transform: translate(0, -100%);
+        transform: translate(0, -1rem);
         border-color: v-bind(borderColorComputed);
         color: var(--navbarColor1);
       }
@@ -774,7 +774,7 @@ export default defineComponent({
     font-size: 0.9rem;
     padding: 0 0.3rem;
     color: black;
-    transform: translate(0, -120%);
+    transform: translate(0, -1.1rem);
     &.text.withBorder:after {
       content: "";
       position: absolute;
@@ -813,7 +813,7 @@ export default defineComponent({
       & + .placeholder-text .text {
         background-color: white;
         font-size: 0.9rem;
-        transform: translate(0, -50%);
+        transform: translate(0, -0.5rem);
         border-color: var(--navbarColor1);
         color: var(--navbarColor1);
       }
@@ -847,7 +847,7 @@ export default defineComponent({
     margin: 0.6rem 0.6rem;
     font-size: 0.9rem;
     color: black;
-    transform: translate(0, -90%);
+    transform: translate(0, -1.3rem);
     &.text.withBorder:after {
       content: "";
       position: absolute;
