@@ -69,7 +69,7 @@
         ]"
         :class="{ dirty: modelValue }"
         type="text"
-        :value="selectedProjection(modelValue)"
+        :value="selectedProjection(modelValue) || modelValue"
         @input="onInput"
         @focus="onFocus"
         @blur="onBlur"
@@ -355,9 +355,16 @@ export default defineComponent({
     filteredItems() {
       //options that are still possible
       const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
-      return this.options!.filter((item) =>
+      let array = this.options!.filter((item) =>
         this.optionProjection(item).match(regexp)
       );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (!array.length)
+        array = array.concat(
+          this.options!.filter((item) => item.match(regexp))
+        );
+      return array;
     },
     currentSelection() {
       //the option which is currently selected
@@ -511,10 +518,22 @@ export default defineComponent({
           this.updateValue("");
       }
       if (this.selectOnBlur) {
-        this.$emit(
-          "selectItem",
+        if (
           this.options?.find((e) => this.optionProjection(e) == this.modelValue)
-        );
+        ) {
+          this.$emit(
+            "selectItem",
+            this.options?.find(
+              (e) => this.optionProjection(e) == this.modelValue
+            )
+          );
+        } else {
+          if (this.options?.find((e) => e == this.modelValue))
+            this.$emit(
+              "selectItem",
+              this.options?.find((e) => e == this.modelValue)
+            );
+        }
       }
       this.$emit("onBlur", {
         modelValue: this.modelValue,
