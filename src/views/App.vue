@@ -70,7 +70,7 @@
         placeholder="Volume"
         type="range"
         v-model="range"
-        sideWidth="5"
+        sideWidth="15"
       ></SexyInput>
     </form>
   </div>
@@ -99,7 +99,7 @@ export default defineComponent({
       array: ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
       text: "",
       search: "",
-      errors: {},
+      errors: {} as any,
     };
   },
   components: {

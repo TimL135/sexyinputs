@@ -245,7 +245,7 @@ export default defineComponent({
       required: true,
     },
     modelValue: {
-      type: String,
+      type: String as any,
       required: true,
     },
     type: {
@@ -433,7 +433,7 @@ export default defineComponent({
       //makes password visible/invisible
       this.viewPassword = !this.viewPassword;
     },
-    updateValue(event: Event | string | any) {
+    updateValue(event: any) {
       //correct the value if necessary and update it
       if (this.controlInput) {
         if (this.type == "range") {
@@ -447,20 +447,15 @@ export default defineComponent({
           return;
         }
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (typeof event == "string") {
         this.$emit("update:modelValue", event);
       } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         this.$emit("update:modelValue", event.target.value);
       }
     },
-    updateSideValue(event: Event | string | any) {
+    updateSideValue(event: any) {
       //update the sideInput value
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+
       this.$emit("update:sideInputVModel", event.target.value);
     },
     async affirm() {
@@ -618,21 +613,6 @@ export default defineComponent({
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
-    .placeholder-text {
-      font-size: 1.4rem; //input fontsize
-      padding: 0 1rem;
-    }
-    &:focus {
-      outline: none;
-      border-color: v-bind(borderColorComputed);
-      & + .placeholder-text .text {
-        background-color: white;
-        font-size: 1.1rem;
-        transform: translate(0, -1.1rem);
-        border-color: v-bind(borderColorComputed);
-        color: var(--navbarColor1);
-      }
-    }
   }
   input[type="number"] {
     -moz-appearance: textfield;
