@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-center">
-    <form action="" style="width: 25%" @submit.prevent="login">
+    <form action="" style="width: 12.5%" @submit.prevent="login">
       <SexyInput
         placeholder="Search"
         type="search"
@@ -52,7 +52,6 @@
         v-model="select"
         :error="errors.select"
         :options="array"
-        :optionProjection="(a:any) => a.name"
         @selectItem="
           (event) => {
             console.log(event);
@@ -60,21 +59,6 @@
         "
         :selectOnBlur="true"
         :controlInput="true"
-        sideInputType="text"
-        sideInputMaxLength="1"
-        :sideInputVModel="key"
-        :sideInputOnInput="
-          () => {
-            this.value = this.value
-              .replace(/[^a-z0-9]/g, '')
-              .replace(/(\..*)\./g, '$1');
-          }
-        "
-        @update:sideInputVModel="
-          (v) => {
-            key = v;
-          }
-        "
       ></SexyInput>
       <SexyInput
         placeholder="Text"
@@ -82,7 +66,12 @@
         v-model="text"
         :labelBorder="true"
       ></SexyInput>
-      <SexyInput placeholder="Volume" type="range" v-model="range"></SexyInput>
+      <SexyInput
+        placeholder="Volume"
+        type="range"
+        v-model="range"
+        sideWidth="5"
+      ></SexyInput>
     </form>
   </div>
 </template>
@@ -107,7 +96,7 @@ export default defineComponent({
       file: null,
       select: "",
       range: 0,
-      array: [{ name: "hello" }, { name: "hallo" }],
+      array: ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
       text: "",
       search: "",
       errors: {},
@@ -118,7 +107,9 @@ export default defineComponent({
   },
   mounted() {
     Object.assign(this.errors, { date: "dies ist nur ein test fehler" });
-    Object.assign(this.errors, { time: "das auch" });
+    Object.assign(this.errors, {
+      time: "hjsdf hjdds uzffn eiuwm uwnbc iowno pswsd kdskb",
+    });
   },
   methods: {
     login() {
