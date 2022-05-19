@@ -594,7 +594,7 @@ export default defineComponent({
 .error {
   padding-left: 0.1rem;
   padding-right: 0.1rem;
-  background-color: white;
+  background-color: transparent;
   color: v-bind(errorColor);
   z-index: 1;
   text-align: start;
@@ -762,11 +762,12 @@ export default defineComponent({
       position: absolute;
       left: 0px;
       width: 100%;
+      height: 50%;
+      margin-top: -1px;
       border-radius: 0.5rem 0.5rem 0rem 0rem;
-      height: 45%;
-      border-top: 1px solid;
       border-left: 1px solid;
       border-right: 1px solid;
+      border-top: 1px solid;
       border-color: v-bind(borderColorComputed);
     }
   }
@@ -820,6 +821,7 @@ export default defineComponent({
       position: absolute;
       left: 0px;
       width: 100%;
+      margin-top: -1px;
       border-radius: 0.5rem 0.5rem 0rem 0rem;
       height: 50%;
       border-top: 1px solid;
