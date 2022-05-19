@@ -21,7 +21,7 @@
     <!-- /search Icon -->
     <!-- standard input field -->
     <input
-      v-if="type != 'textarea' && type != 'select'"
+      v-if="type != 'textarea' && type != 'select' && type != 'multiSelect'"
       v-bind="$attrs"
       class="form-control shadow-none"
       :type="viewPassword ? 'text' : type"
@@ -42,13 +42,17 @@
       autocomplete="off"
     />
     <!-- /standard input field -->
+    <!-- multiSelect list -->
+    <div v-for="multi of multiSelect" :key="JSON.stringify(multi)" class="mb-1">
+      {{ multi }}
+    </div>
+    <!-- /multiSelect list -->
     <!-- options for datalist -->
     <div
       :id="wrapperId"
       class="simple-typeahead input-contain"
-      v-if="type == 'select'"
+      v-if="type == 'select' || type == 'multiSelect'"
     >
-      <!-- fgh -->
       <input
         v-bind="$attrs"
         :id="id"
@@ -84,7 +88,7 @@
       </label>
       <!-- /label for select -->
       <div
-        v-if="isListVisible && type == 'select'"
+        v-if="isListVisible && (type == 'select' || type == 'multiSelect')"
         class="simple-typeahead-list"
         :style="[btnText || sideInputType ? `width:${inputWidth}` : '']"
       >
@@ -334,6 +338,9 @@ export default defineComponent({
     errorColor: {
       type: String,
       default: "red",
+    },
+    multiSelect: {
+      type: Array,
     },
   },
   data() {
@@ -716,6 +723,7 @@ export default defineComponent({
     display: flex;
     background-color: white;
     justify-content: center;
+    outline: none;
   }
   input + .placeholder-text {
     align-items: center;
@@ -777,21 +785,6 @@ export default defineComponent({
     border-radius: 0.5rem;
     padding-top: 1rem;
     text-shadow: none;
-    .placeholder-text {
-      font-size: 1.4rem; //input fontsize
-      padding: 1rem 1.2rem;
-    }
-    &:focus {
-      outline: none;
-      border-color: var(--navbarColor1);
-      & + .placeholder-text .text {
-        background-color: white;
-        font-size: 0.9rem;
-        transform: translate(0, -0.5rem);
-        border-color: var(--navbarColor1);
-        color: var(--navbarColor1);
-      }
-    }
   }
   .placeholder-text {
     align-items: start;
@@ -821,14 +814,14 @@ export default defineComponent({
     margin: 0.6rem 0.6rem;
     font-size: 0.9rem;
     color: black;
-    transform: translate(0, -1.3rem);
+    transform: translate(0, -1.2rem);
     &.text.withBorder:after {
       content: "";
       position: absolute;
       left: 0px;
       width: 100%;
       border-radius: 0.5rem 0.5rem 0rem 0rem;
-      height: 51%;
+      height: 50%;
       border-top: 1px solid;
       border-left: 1px solid;
       border-right: 1px solid;
