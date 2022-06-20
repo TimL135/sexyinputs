@@ -70,7 +70,7 @@
         placeholder="Volume"
         type="range"
         v-model="range"
-        sideWidth="15"
+        sideWidth="15%"
       ></SexyInput>
     </form>
   </div>

@@ -40,6 +40,7 @@
       :id="id"
       :list="id2"
       autocomplete="off"
+      :required="type == 'date' || type == 'time'"
     />
     <!-- /standard input field -->
     <!-- multiSelect list -->
@@ -262,6 +263,9 @@ export default defineComponent({
     btnClass: {
       type: String,
     },
+    btnAction: {
+      type: Function,
+    },
     sideInputType: {
       type: String,
     },
@@ -282,7 +286,7 @@ export default defineComponent({
     },
     sideWidth: {
       type: String,
-      default: "20",
+      default: "20%",
     },
     labelStyle: {
       type: String,
@@ -290,9 +294,6 @@ export default defineComponent({
     labelBorder: {
       type: Boolean,
       default: false,
-    },
-    btnAction: {
-      type: Function,
     },
     options: {
       type: Array,
@@ -457,12 +458,15 @@ export default defineComponent({
       if (typeof event == "string") {
         this.$emit("update:modelValue", event);
       } else {
-        this.$emit("update:modelValue", event.target.value);
+        if (this.type == "number") {
+          this.$emit("update:modelValue", event.target.value * 1);
+        } else {
+          this.$emit("update:modelValue", event.target.value);
+        }
       }
     },
     updateSideValue(event: any) {
       //update the sideInput value
-
       this.$emit("update:sideInputVModel", event.target.value);
     },
     async affirm() {
