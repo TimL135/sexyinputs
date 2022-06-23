@@ -61,6 +61,27 @@
         :controlInput="true"
       ></SexyInput>
       <SexyInput
+        placeholder="Multi Select"
+        type="multiSelect"
+        :multiSelect="multiSelect"
+        v-model="multiSelectText"
+        :error="errors.select"
+        :options="array"
+        :selectOnBlur="true"
+        :controlInput="true"
+        @selectItem="
+          (event) => {
+            multiSelectText = '';
+            multiSelect.push(event);
+          }
+        "
+        @deleteItem="
+          (index) => {
+            multiSelect = multiSelect.filter((v, i) => i != index);
+          }
+        "
+      ></SexyInput>
+      <SexyInput
         placeholder="Text"
         type="textarea"
         v-model="text"
@@ -95,8 +116,10 @@ export default defineComponent({
       date: "",
       file: null,
       select: "",
+      multiSelectText: "",
+      multiSelect: ["1"],
       range: 0,
-      array: ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+      array: ["1", "2", "3", "4", "5", "6"],
       text: "",
       search: "",
       errors: {} as any,
