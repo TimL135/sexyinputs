@@ -98,7 +98,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import SexyInput from "@/components/SexyInput.vue";
+import SexyInput from "../components/SexyInput.vue";
 export default defineComponent({
   setup() {
     return {
