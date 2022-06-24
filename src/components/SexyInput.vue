@@ -40,7 +40,7 @@
       :id="id"
       :list="id2"
       autocomplete="off"
-      :required="type == 'date' || type == 'time'"
+      :required="type == 'date' || type == 'time' || required"
     />
     <!-- /standard input field -->
     <!-- options for datalist -->
@@ -71,6 +71,7 @@
         @blur="onBlur"
         @keydown.enter.tab.prevent="selectCurrentSelection"
         autocomplete="off"
+        :required="required"
       />
       <!-- label for select -->
       <label class="placeholder-text">
@@ -164,6 +165,7 @@
       :value="modelValue"
       :class="{ dirty: modelValue }"
       rows="3"
+      :required="required"
     ></textarea>
     <!-- /standard textarea field -->
     <!-- label for select -->
@@ -369,6 +371,10 @@ export default defineComponent({
     },
     multiSelect: {
       type: Array,
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

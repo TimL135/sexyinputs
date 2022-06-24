@@ -6,6 +6,7 @@
         type="search"
         v-model="search"
         :error="errors.search"
+        data-test="search"
       ></SexyInput>
       <SexyInput
         placeholder="Email"
@@ -13,6 +14,7 @@
         v-model="email"
         :labelBorder="true"
         :error="errors.email"
+        data-test="email"
       ></SexyInput>
       <SexyInput
         placeholder="Password"
@@ -21,6 +23,8 @@
         class="mt-4"
         :labelBorder="true"
         :error="errors.password"
+        :required="true"
+        data-test="password"
       ></SexyInput>
       <button class="mt-3">login</button>
       <SexyInput
@@ -59,6 +63,7 @@
         "
         :selectOnBlur="true"
         :controlInput="true"
+        data-test="select"
       ></SexyInput>
       <SexyInput
         placeholder="Multi Select"
