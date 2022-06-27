@@ -66,6 +66,21 @@
         data-test="select"
       ></SexyInput>
       <SexyInput
+        placeholder="Select2"
+        type="select"
+        v-model="select2"
+        :error="errors.select"
+        :options="array"
+        @selectItem="
+          (event) => {
+            console.log(event);
+          }
+        "
+        :selectOnBlur="false"
+        :controlInput="false"
+        data-test="select2"
+      ></SexyInput>
+      <SexyInput
         placeholder="Multi Select"
         type="multiSelect"
         :multiSelect="multiSelect"
@@ -85,6 +100,7 @@
             multiSelect = multiSelect.filter((v, i) => i != index);
           }
         "
+        data-test="multiSelect"
       ></SexyInput>
       <SexyInput
         placeholder="Text"
@@ -121,6 +137,7 @@ export default defineComponent({
       date: "",
       file: null,
       select: "",
+      select2: "",
       multiSelectText: "",
       multiSelect: ["1"],
       range: 0,
