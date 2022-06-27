@@ -609,7 +609,7 @@ export default defineComponent({
       //will be executed when an option is selected
       await this.updateValue(this.optionProjection(item));
       this.currentSelectionIndex = 0;
-      document.getElementById(this.id)!.blur();
+      document.getElementById(this.id)?.blur();
       if (!this.selectOnBlur) this.$emit("selectItem", item);
     },
     escapeRegExp(string: string) {
