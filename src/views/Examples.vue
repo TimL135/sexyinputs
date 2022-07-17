@@ -56,6 +56,7 @@
         v-model="select"
         :error="errors.select"
         :options="array"
+        listClass="text-danger"
         @selectItem="
           (event) => {
             console.log(event);
@@ -100,6 +101,7 @@
             multiSelect = multiSelect.filter((v, i) => i != index);
           }
         "
+        multi-select-class="text-danger"
         data-test="multiSelect"
       ></SexyInput>
       <SexyInput

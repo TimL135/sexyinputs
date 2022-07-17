@@ -78,7 +78,7 @@
         <div
           class="text"
           :style="labelStyle"
-          :class="{ withBorder: labelBorder }"
+          :class="[{ withBorder: labelBorder }, labelClass]"
         >
           {{ placeholder }}
         </div>
@@ -87,6 +87,7 @@
       <div
         v-if="isListVisible && (type == 'select' || type == 'multiSelect')"
         class="simple-typeahead-list"
+        :class="listClass"
         :style="[btnText || sideInputType ? `width:${inputWidth}` : '']"
       >
         <div v-if="$slots['list-header']">
@@ -134,6 +135,7 @@
       v-for="(multi, index) of multiSelect"
       :key="JSON.stringify(multi)"
       class="mb-1 d-flex justify-content-between px-2"
+      :class="multiSelectClass"
     >
       {{ multi }}
       <span @click="$emit('deleteItem', index)">
@@ -176,7 +178,7 @@
       <div
         class="text"
         :style="labelStyle"
-        :class="{ withBorder: labelBorder }"
+        :class="[{ withBorder: labelBorder }, labelClass]"
       >
         {{ placeholder }}
       </div>
@@ -320,6 +322,9 @@ export default defineComponent({
     labelStyle: {
       type: String,
     },
+    labelClass: {
+      type: String,
+    },
     labelBorder: {
       type: Boolean,
       default: false,
@@ -332,6 +337,9 @@ export default defineComponent({
       default: (item: any) => {
         return item;
       },
+    },
+    optionClass: {
+      type: String,
     },
     selectedProjection: {
       type: Function,
@@ -358,6 +366,9 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    listClass: {
+      type: String,
+    },
     error: {
       type: String,
     },
@@ -371,6 +382,9 @@ export default defineComponent({
     },
     multiSelect: {
       type: Array,
+    },
+    multiSelectClass: {
+      type: String,
     },
     required: {
       type: Boolean,
@@ -395,13 +409,18 @@ export default defineComponent({
     filteredItems() {
       //options that are still possible
       const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
-      let array = this.options!.filter((item) =>
-        this.optionProjection(item).match(regexp)
-      );
-      if (!array.length)
-        array = array.concat(
-          this.options!.filter((item: any) => item.match(regexp))
+      let array = [] as any[];
+      try {
+        array = this.options!.filter((item) =>
+          this.optionProjection(item).match(regexp)
         );
+        if (!array.length)
+          array = array.concat(
+            this.options!.filter((item: any) => item.match(regexp))
+          );
+      } catch {
+        array = [];
+      }
       return array.filter((e) => !this.multiSelect?.includes(e));
     },
     currentSelection() {
@@ -891,7 +910,7 @@ export default defineComponent({
     .simple-typeahead-list-item {
       border-bottom: 1px solid;
       border-color: v-bind(borderColorComputed);
-      border-right: 1px solid;
+      // border-right: 1px solid;
       padding: 0.6rem 1rem;
       &.simple-typeahead-list-item-active {
         background-color: #e1e1e1;
