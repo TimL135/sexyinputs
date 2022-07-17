@@ -95,9 +95,13 @@
         </div>
         <div
           class="simple-typeahead-list-item"
-          :class="{
-            'simple-typeahead-list-item-active': currentSelectionIndex == index,
-          }"
+          :class="[
+            {
+              'simple-typeahead-list-item-active':
+                currentSelectionIndex == index,
+            },
+            listItemClass(optionProjection(item)),
+          ]"
           v-for="(item, index) in filteredItems"
           :key="index"
           @mousedown.prevent
@@ -134,8 +138,8 @@
     <div
       v-for="(multi, index) of multiSelect"
       :key="JSON.stringify(multi)"
-      class="mb-1 d-flex justify-content-between px-2"
-      :class="multiSelectClass"
+      class="mt-1 d-flex justify-content-between px-2"
+      :class="multiSelectClass(multi)"
     >
       {{ multi }}
       <span @click="$emit('deleteItem', index)">
@@ -369,6 +373,12 @@ export default defineComponent({
     listClass: {
       type: String,
     },
+    listItemClass: {
+      type: Function,
+      default: (item: any) => {
+        return "";
+      },
+    },
     error: {
       type: String,
     },
@@ -384,7 +394,10 @@ export default defineComponent({
       type: Array,
     },
     multiSelectClass: {
-      type: String,
+      type: Function,
+      default: (item: any) => {
+        return "";
+      },
     },
     required: {
       type: Boolean,
