@@ -101,7 +101,6 @@
             multiSelect = multiSelect.filter((v, i) => i != index);
           }
         "
-        multi-select-class="text-danger"
         data-test="multiSelect"
       ></SexyInput>
       <SexyInput

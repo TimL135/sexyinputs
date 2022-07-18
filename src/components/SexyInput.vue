@@ -925,7 +925,10 @@ export default defineComponent({
   .simple-typeahead-list {
     position: absolute;
     width: 100%;
-    max-height: 30vh;
+    max-height: 60vh;
+    @media (min-width: 900px) {
+      max-height: 30vh;
+    }
     overflow-y: auto;
     background-color: #fafafa;
     border-radius: 0 0 0.5rem 0.5rem;
