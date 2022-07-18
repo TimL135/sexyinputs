@@ -58,7 +58,7 @@
             ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
             : '',
           isListVisible
-            ? sideInputType
+            ? btnText || sideInputType
               ? 'border-radius: 0.5rem 0 0 0;border: 2px solid'
               : 'border-radius: 0.5rem 0.5rem 0 0;border: 2px solid'
             : '',
