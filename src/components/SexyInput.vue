@@ -439,7 +439,16 @@ export default defineComponent({
       } catch {
         array = [];
       }
-      return array.filter((e) => !this.multiSelect?.includes(e));
+      if (this.type == "multiSelect") {
+        for (let element of this.multiSelect) {
+          if (array.findIndex((e) => e == element))
+            array.splice(
+              array.findIndex((e) => e == element),
+              1
+            );
+        }
+      }
+      return array;
     },
     currentSelection() {
       //the option which is currently selected
