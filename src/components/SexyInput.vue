@@ -441,7 +441,7 @@ export default defineComponent({
       }
       if (this.type == "multiSelect") {
         for (let element of this.multiSelect) {
-          if (array.findIndex((e) => e == element))
+          if (array.findIndex((e) => e == element) != -1)
             array.splice(
               array.findIndex((e) => e == element),
               1
