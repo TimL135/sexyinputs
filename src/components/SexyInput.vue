@@ -541,8 +541,7 @@ export default defineComponent({
             if (inputValue < event.target.min)
               inputValue = event.target.min * 1;
           }
-          if (isNaN(inputValue)) inputValue = 0;
-          event.target.value = inputValue;
+          if (event.target.value) event.target.value = inputValue;
         }
       }
       if (typeof event == "string") {

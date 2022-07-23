@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-center">
-    <form action="" style="width: 12.5%" @submit.prevent="login">
+    <form action="" style="width: 25%" @submit.prevent="login">
       <SexyInput
         placeholder="Search"
         type="search"
