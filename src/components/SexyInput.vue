@@ -28,7 +28,7 @@
       :value="modelValue"
       @input="updateValue"
       :class="[
-        { dirty: modelValue },
+        { dirty: modelValue || typeof modelValue == 'number' },
         type == 'range' ? 'pe-4' : '',
         error && labelBorder ? 'mt-4' : '',
       ]"
@@ -547,7 +547,10 @@ export default defineComponent({
       if (typeof event == "string") {
         this.$emit("update:modelValue", event);
       } else {
-        if (this.type == "number" || this.type == "range") {
+        if (
+          (this.type == "number" || this.type == "range") &&
+          event.target.value
+        ) {
           this.$emit("update:modelValue", event.target.value * 1);
         } else {
           this.$emit("update:modelValue", event.target.value);

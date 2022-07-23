@@ -131,7 +131,7 @@ export default defineComponent({
   data() {
     return {
       key: "",
-      number: null,
+      number: "",
       time: "",
       email: "",
       username: "",
