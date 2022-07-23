@@ -35,6 +35,7 @@
       <SexyInput
         placeholder="number"
         type="number"
+        max="100"
         v-model="number"
       ></SexyInput>
       <SexyInput
