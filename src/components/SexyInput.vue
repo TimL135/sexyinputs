@@ -1,5 +1,14 @@
 <template>
-  <div class="input-contain mt-3 shadow-none">
+  <!-- Button -->
+  <button
+    v-if="type == 'button'"
+    :type="btnType"
+    @click="affirm()"
+    :class="btnClass"
+  >
+    {{ btnText }}
+  </button>
+  <div class="input-contain mt-3 shadow-none" v-else>
     <!-- search Icon -->
     <div
       v-if="type == 'search' && (isListVisible || modelValue)"
@@ -21,7 +30,12 @@
     <!-- /search Icon -->
     <!-- standard input field -->
     <input
-      v-if="type != 'textarea' && type != 'select' && type != 'multiSelect'"
+      v-if="
+        type != 'textarea' &&
+        type != 'select' &&
+        type != 'multiSelect' &&
+        type != 'button'
+      "
       v-bind="$attrs"
       class="form-control shadow-none"
       :type="viewPassword ? 'text' : type"
@@ -287,11 +301,11 @@ export default defineComponent({
   props: {
     placeholder: {
       type: String as any,
-      required: true,
+      // required: true,
     },
     modelValue: {
       type: String as any,
-      required: true,
+      // required: true,
     },
     type: {
       type: String,
@@ -429,6 +443,7 @@ export default defineComponent({
       return `${this.id}_wrapper`;
     },
     filteredItems() {
+      if (this.type != "select" && this.type != "multiSelect") return;
       //options that are still possible
       const regexp = new RegExp(this.escapeRegExp(this.modelValue), "i");
       let array = [] as any[];
@@ -692,6 +707,10 @@ export default defineComponent({
 });
 </script>
 <style scoped lang="scss">
+button {
+  border-radius: 0.5rem;
+  width: 100%;
+}
 //material inputs
 .error {
   padding-left: 0.1rem;

@@ -16,6 +16,7 @@
         :error="errors.email"
         data-test="email"
       ></SexyInput>
+      <Email placeholder="email" v-model="email" :label-border="true"></Email>
       <SexyInput
         placeholder="Password"
         type="password"
@@ -122,6 +123,8 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import SexyInput from "../components/SexyInput.vue";
+import Email from "../components/Email.vue";
+import Email from "../components/Email.vue";
 export default defineComponent({
   setup() {
     return {
@@ -151,6 +154,7 @@ export default defineComponent({
   },
   components: {
     SexyInput,
+    Email,
   },
   mounted() {
     Object.assign(this.errors, { date: "dies ist nur ein test fehler" });
