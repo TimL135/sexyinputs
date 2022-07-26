@@ -254,8 +254,8 @@ const filteredItems = computed(() => {
   //options that are still possible
   let regexp: RegExp;
   if (options.value?.length > 50)
-    regexp = new RegExp(escapeRegExp(modelValue.value), "i");
-  else regexp = new RegExp(escapeRegExp("^" + modelValue.value), "i");
+    regexp = new RegExp(escapeRegExp("^" + modelValue.value), "i");
+  else regexp = new RegExp(escapeRegExp(modelValue.value), "i");
   let array = [] as any[];
   try {
     array = options.value?.filter((item) =>
