@@ -8,7 +8,7 @@
     <input
       v-bind="$attrs"
       class="form-control shadow-none"
-      type="email"
+      type="search"
       :value="modelValue"
       @input="updateValue"
       :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"
@@ -162,6 +162,9 @@ function updateSideValue(event: any) {
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
   }
   button,
   input.sideInput {

@@ -8,14 +8,12 @@
     <input
       v-bind="$attrs"
       class="form-control shadow-none"
-      type="email"
+      type="range"
       :value="modelValue"
       @input="updateValue"
-      :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"
+      :class="[error && labelBorder ? 'mt-4' : '']"
       :style="[
-        checkButton || sideInputType
-          ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
-          : '',
+        `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`,
         checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;',
       ]"
       @focus="isInputFocus = true"
@@ -27,27 +25,17 @@
       {{ placeholder }}
     </label>
     <!-- /placeholder -->
-    <!-- sideButton -->
-    <button
-      v-if="checkButton"
-      :type="btnType"
-      @click="affirm()"
-      :class="btnClass"
-    >
-      <slot name="button"></slot>
-    </button>
-    <!-- /sideButton -->
-    <!-- sideInput -->
+    <!-- sideInput for rangeInput -->
     <input
-      v-if="sideInputType"
+      type="number"
       class="sideInput"
-      :type="sideInputType"
-      :class="sideInputClass"
-      :maxlength="sideInputMaxLength"
-      @input="updateSideValue"
-      :value="sideInputVModel"
+      @input="updateValue"
+      :value="modelValue"
+      :style="sideInputStyle"
+      :min="element?.min || 0"
+      :max="element?.max || 100"
     />
-    <!-- /sideInput -->
+    <!-- /sideInput for rangeInput -->
     <!-- error -->
     <div v-if="error" class="error">
       {{ error }}
@@ -56,48 +44,47 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, toRefs, useSlots } from "vue";
+import { computed, onMounted, ref, toRefs, useSlots } from "vue";
 const emit = defineEmits(["update:modelValue", "update:sideInputVModel"]);
 const props = withDefaults(
   defineProps<{
-    modelValue: string;
+    modelValue: number;
+    controlInput: boolean;
     error?: string;
     errorColor?: string;
     labelBorder?: boolean;
     labelClass?: string;
-    btnType?: "button" | "submit" | "reset";
     btnClass?: string;
-    btnAction?: Function;
     sideWidth?: string;
-    sideInputType?: string;
-    sideInputClass?: string;
-    sideInputMaxLength?: string;
-    sideInputVModel?: any;
+    sideInputStyle?: string;
     placeholder: string;
     borderColor?: string;
   }>(),
   {
+    controlInput: true,
     errorColor: "red",
     sideWidth: "20%",
   }
 );
 const {
   modelValue,
+  controlInput,
   error,
   errorColor,
   labelBorder,
   labelClass,
-  btnType,
-  btnClass,
-  btnAction,
   sideWidth,
-  sideInputType,
-  sideInputClass,
-  sideInputMaxLength,
-  sideInputVModel,
+  sideInputStyle,
   placeholder,
   borderColor,
 } = toRefs(props);
+onMounted(() => {
+  setTimeout(() => {
+    element.value = document.getElementById(id.value) as HTMLInputElement;
+  }, 1);
+});
+const element = ref();
+const id = ref(JSON.stringify(Math.random()));
 const isInputFocus = ref(false);
 const slots = useSlots();
 const borderColorComputed = computed(() => {
@@ -106,29 +93,32 @@ const borderColorComputed = computed(() => {
 const checkIcon = computed(() => {
   return !!slots.icon;
 });
-const checkButton = computed(() => {
-  return !!slots.button;
-});
+
 const inputWidth = computed(() => {
   let width = 100;
-  if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0;
+  width -= parseInt(sideWidth?.value) || 0;
   return width + "%";
 });
-async function affirm() {
-  //executes the btnAction
-  try {
-    if (btnAction?.value) await btnAction.value();
-  } catch {
-    return;
-  }
-}
+const rangeTrackSize = computed(() => {
+  //determines the marked area of rangeInput
+  const min = +element.value?.min || 0;
+  const max = +element.value?.max || 100;
+  const value = modelValue.value;
+  const size = ((value - min) / (max - min)) * 100;
+  return size + "%";
+});
 function updateValue(event: any) {
   //correct the value if necessary and update it
-  emit("update:modelValue", event.target.value);
-}
-function updateSideValue(event: any) {
-  //update the sideInput value
-  emit("update:sideInputVModel", event.target.value);
+  if (controlInput) {
+    let inputValue = event.target.value * 1;
+    if (inputValue > (event.target.max || 100))
+      inputValue = event.target.max * 1 || 100;
+    if (inputValue < (event.target.min || 0))
+      inputValue = event.target.min * 1 || 0;
+    if (isNaN(inputValue)) inputValue = 0;
+    event.target.value = inputValue;
+  }
+  emit("update:modelValue", event.target.value * 1);
 }
 </script>
 <style scoped lang="scss">
@@ -162,9 +152,49 @@ function updateSideValue(event: any) {
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0.5rem 0 0 0.5rem;
+    width: v-bind(inputWidth);
+    cursor: pointer;
+    &::-moz-range-track {
+      height: 0.2rem;
+      background: linear-gradient(to right, #293043, #293043), #d7d7d7;
+      background-size: var(--background-size, 0%) 100%;
+      background-repeat: no-repeat;
+      border-radius: 5px;
+    }
+    &::-webkit-slider-runnable-track {
+      height: 0.2rem;
+      background: linear-gradient(to right, #293043, #293043), #d7d7d7;
+      background-size: v-bind(rangeTrackSize);
+      background-repeat: no-repeat;
+      border-radius: 5px;
+    }
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 1rem;
+      height: 1rem;
+      background: #293043;
+      border: 1px white solid;
+      border-radius: 50%;
+      margin-top: -0.4rem;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    &::-moz-range-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 1rem;
+      height: 1rem;
+      background: #293043;
+      border: 1px white solid;
+      border-radius: 50%;
+      margin-top: -0.4rem;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+    }
   }
-  button,
-  input.sideInput {
+  .sideInput {
     align-items: center;
     text-align: center;
     position: absolute;
@@ -207,8 +237,7 @@ function updateSideValue(event: any) {
     transition: transform 0.15s ease-out, font-size 0.15s ease-out,
       background-color 0.2s ease-out, color 0.15s ease-out;
   }
-  input:focus + .text,
-  input.dirty + .text {
+  input + .text {
     background-color: white;
     border-radius: 0.5rem 0.5rem 0rem 0rem;
     font-size: 0.9rem;

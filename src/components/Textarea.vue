@@ -1,53 +1,18 @@
 <template>
   <div class="input-contain mt-3 shadow-none">
-    <!-- icon -->
-    <div v-if="checkIcon && (isInputFocus || modelValue)" class="icon">
-      <slot name="icon"></slot>
-    </div>
-    <!-- /icon -->
-    <input
+    <textarea
       v-bind="$attrs"
       class="form-control shadow-none"
-      type="email"
-      :value="modelValue"
       @input="updateValue"
-      :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"
-      :style="[
-        checkButton || sideInputType
-          ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
-          : '',
-        checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;',
-      ]"
-      @focus="isInputFocus = true"
-      @blur="isInputFocus = false"
-      autocomplete="off"
-    />
+      :value="modelValue"
+      :class="{ dirty: modelValue }"
+      rows="3"
+    ></textarea>
     <!-- placeholder -->
     <label class="text" :class="[{ withBorder: labelBorder }, labelClass]">
       {{ placeholder }}
     </label>
     <!-- /placeholder -->
-    <!-- sideButton -->
-    <button
-      v-if="checkButton"
-      :type="btnType"
-      @click="affirm()"
-      :class="btnClass"
-    >
-      <slot name="button"></slot>
-    </button>
-    <!-- /sideButton -->
-    <!-- sideInput -->
-    <input
-      v-if="sideInputType"
-      class="sideInput"
-      :type="sideInputType"
-      :class="sideInputClass"
-      :maxlength="sideInputMaxLength"
-      @input="updateSideValue"
-      :value="sideInputVModel"
-    />
-    <!-- /sideInput -->
     <!-- error -->
     <div v-if="error" class="error">
       {{ error }}
@@ -60,19 +25,11 @@ import { computed, ref, toRefs, useSlots } from "vue";
 const emit = defineEmits(["update:modelValue", "update:sideInputVModel"]);
 const props = withDefaults(
   defineProps<{
-    modelValue: string;
+    modelValue: any;
     error?: string;
     errorColor?: string;
     labelBorder?: boolean;
     labelClass?: string;
-    btnType?: "button" | "submit" | "reset";
-    btnClass?: string;
-    btnAction?: Function;
-    sideWidth?: string;
-    sideInputType?: string;
-    sideInputClass?: string;
-    sideInputMaxLength?: string;
-    sideInputVModel?: any;
     placeholder: string;
     borderColor?: string;
   }>(),
@@ -87,41 +44,14 @@ const {
   errorColor,
   labelBorder,
   labelClass,
-  btnType,
-  btnClass,
-  btnAction,
-  sideWidth,
-  sideInputType,
-  sideInputClass,
-  sideInputMaxLength,
-  sideInputVModel,
   placeholder,
   borderColor,
 } = toRefs(props);
-const isInputFocus = ref(false);
 const slots = useSlots();
 const borderColorComputed = computed(() => {
   return error?.value ? errorColor?.value : borderColor?.value;
 });
-const checkIcon = computed(() => {
-  return !!slots.icon;
-});
-const checkButton = computed(() => {
-  return !!slots.button;
-});
-const inputWidth = computed(() => {
-  let width = 100;
-  if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0;
-  return width + "%";
-});
-async function affirm() {
-  //executes the btnAction
-  try {
-    if (btnAction?.value) await btnAction.value();
-  } catch {
-    return;
-  }
-}
+
 function updateValue(event: any) {
   //correct the value if necessary and update it
   emit("update:modelValue", event.target.value);
@@ -153,42 +83,16 @@ function updateSideValue(event: any) {
     top: 0.5rem;
     left: 0.2rem;
   }
-  input {
+  textarea {
     text-align: start;
     padding-left: 1rem;
     padding-top: 0.5rem;
-    height: 2.5rem;
     width: 100%;
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
   }
-  button,
-  input.sideInput {
-    align-items: center;
-    text-align: center;
-    position: absolute;
-    padding: 0;
-    top: 0;
-    bottom: 0;
-    left: v-bind(inputWidth);
-    right: 0;
-    width: v-bind(sideWidth);
-    border-radius: 0 0.5rem 0.5rem 0;
-    border-width: 1px;
-    border-color: v-bind(borderColorComputed);
-    border-style: solid;
-    border-left: none;
-    background-color: white;
-    justify-content: center;
-    outline: none;
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-  }
-  input + .text {
+  textarea + .text {
     align-items: center;
     position: absolute;
     top: 0.5rem;
@@ -207,8 +111,8 @@ function updateSideValue(event: any) {
     transition: transform 0.15s ease-out, font-size 0.15s ease-out,
       background-color 0.2s ease-out, color 0.15s ease-out;
   }
-  input:focus + .text,
-  input.dirty + .text {
+  textarea:focus + .text,
+  textarea.dirty + .text {
     background-color: white;
     border-radius: 0.5rem 0.5rem 0rem 0rem;
     font-size: 0.9rem;
@@ -229,7 +133,7 @@ function updateSideValue(event: any) {
       border-color: v-bind(borderColorComputed);
     }
   }
-  input:focus + .text {
+  textarea:focus + .text {
     border-color: var(--navbarColor1);
     color: var(--navbarColor1);
   }

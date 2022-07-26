@@ -8,46 +8,21 @@
     <input
       v-bind="$attrs"
       class="form-control shadow-none"
-      type="email"
+      type="time"
       :value="modelValue"
       @input="updateValue"
       :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"
-      :style="[
-        checkButton || sideInputType
-          ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
-          : '',
-        checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;',
-      ]"
+      :style="[checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;']"
       @focus="isInputFocus = true"
       @blur="isInputFocus = false"
       autocomplete="off"
+      required
     />
     <!-- placeholder -->
     <label class="text" :class="[{ withBorder: labelBorder }, labelClass]">
       {{ placeholder }}
     </label>
     <!-- /placeholder -->
-    <!-- sideButton -->
-    <button
-      v-if="checkButton"
-      :type="btnType"
-      @click="affirm()"
-      :class="btnClass"
-    >
-      <slot name="button"></slot>
-    </button>
-    <!-- /sideButton -->
-    <!-- sideInput -->
-    <input
-      v-if="sideInputType"
-      class="sideInput"
-      :type="sideInputType"
-      :class="sideInputClass"
-      :maxlength="sideInputMaxLength"
-      @input="updateSideValue"
-      :value="sideInputVModel"
-    />
-    <!-- /sideInput -->
     <!-- error -->
     <div v-if="error" class="error">
       {{ error }}
@@ -56,7 +31,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, toRefs, useSlots } from "vue";
+import { computed, onMounted, ref, toRefs, useSlots } from "vue";
 const emit = defineEmits(["update:modelValue", "update:sideInputVModel"]);
 const props = withDefaults(
   defineProps<{
@@ -87,17 +62,21 @@ const {
   errorColor,
   labelBorder,
   labelClass,
-  btnType,
-  btnClass,
-  btnAction,
-  sideWidth,
-  sideInputType,
-  sideInputClass,
-  sideInputMaxLength,
-  sideInputVModel,
   placeholder,
   borderColor,
 } = toRefs(props);
+onMounted(() => {
+  //set standard value to current time
+  if (modelValue.value.length != 5) {
+    const date = new Date();
+    let time =
+      ("0" + date.getHours()).slice(-2) +
+      ":" +
+      ("0" + date.getMinutes()).slice(-2);
+    updateValue(time);
+  }
+});
+
 const isInputFocus = ref(false);
 const slots = useSlots();
 const borderColorComputed = computed(() => {
@@ -106,25 +85,10 @@ const borderColorComputed = computed(() => {
 const checkIcon = computed(() => {
   return !!slots.icon;
 });
-const checkButton = computed(() => {
-  return !!slots.button;
-});
-const inputWidth = computed(() => {
-  let width = 100;
-  if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0;
-  return width + "%";
-});
-async function affirm() {
-  //executes the btnAction
-  try {
-    if (btnAction?.value) await btnAction.value();
-  } catch {
-    return;
-  }
-}
 function updateValue(event: any) {
   //correct the value if necessary and update it
-  emit("update:modelValue", event.target.value);
+  if (typeof event == "string") emit("update:modelValue", event);
+  else emit("update:modelValue", event.target.value);
 }
 function updateSideValue(event: any) {
   //update the sideInput value
@@ -162,30 +126,12 @@ function updateSideValue(event: any) {
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
-  }
-  button,
-  input.sideInput {
-    align-items: center;
-    text-align: center;
-    position: absolute;
-    padding: 0;
-    top: 0;
-    bottom: 0;
-    left: v-bind(inputWidth);
-    right: 0;
-    width: v-bind(sideWidth);
-    border-radius: 0 0.5rem 0.5rem 0;
-    border-width: 1px;
-    border-color: v-bind(borderColorComputed);
-    border-style: solid;
-    border-left: none;
-    background-color: white;
-    justify-content: center;
-    outline: none;
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    &::-webkit-calendar-picker-indicator {
+      display: flex;
+      justify-content: end;
+      cursor: pointer;
+      height: 1.5rem;
+      width: 1.5rem;
     }
   }
   input + .text {

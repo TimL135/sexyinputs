@@ -8,7 +8,7 @@
     <input
       v-bind="$attrs"
       class="form-control shadow-none"
-      type="email"
+      type="text"
       :value="modelValue"
       @input="updateValue"
       :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"

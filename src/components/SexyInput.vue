@@ -9,25 +9,11 @@
     {{ btnText }}
   </button>
   <div class="input-contain mt-3 shadow-none" v-else>
-    <!-- search Icon -->
-    <div
-      v-if="type == 'search' && (isListVisible || modelValue)"
-      class="search"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="currentColor"
-        class="bi bi-search"
-        viewBox="0 0 16 16"
-      >
-        <path
-          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-        />
-      </svg>
+    <!-- icon -->
+    <div v-if="checkIcon && (isHTMLfocus || modelValue)" class="icon">
+      <slot name="icon"></slot>
     </div>
-    <!-- /search Icon -->
+    <!-- /icon -->
     <!-- standard input field -->
     <input
       v-if="
@@ -41,16 +27,19 @@
       :type="viewPassword ? 'text' : type"
       :value="modelValue"
       @input="updateValue"
+      @focus="isHTMLfocus = true"
+      @blur="isHTMLfocus = false"
       :class="[
         { dirty: modelValue || typeof modelValue == 'number' },
         type == 'range' ? 'pe-4' : '',
         error && labelBorder ? 'mt-4' : '',
       ]"
-      :style="
+      :style="[
         btnText || type == 'password' || sideInputType
           ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
-          : ''
-      "
+          : '',
+        checkIcon ? 'padding-left: 2rem;' : 'padding-left: none;',
+      ]"
       :id="id"
       :list="id2"
       autocomplete="off"
@@ -435,9 +424,14 @@ export default defineComponent({
       element: null as unknown as HTMLInputElement, //the standard element
       isListVisible: false, //make the datalist Visible
       currentSelectionIndex: 0, //the index of the selected option in datalist
+      isHTMLfocus: false,
+      test: "",
     };
   },
   computed: {
+    checkIcon() {
+      return !!this.$slots.icon;
+    },
     wrapperId() {
       //the id for the div around the datalist
       return `${this.id}_wrapper`;
@@ -724,9 +718,8 @@ button {
 .input-contain {
   position: relative;
   border-radius: 0.5rem;
-  .search {
-    content: "";
-    background-color: white;
+  .icon {
+    background-color: transparent;
     position: absolute;
     z-index: 9999;
     top: 0.5rem;
@@ -804,7 +797,6 @@ button {
     }
   }
   input[type="search"] {
-    padding-left: 2rem;
     &::-webkit-search-cancel-button {
       display: none;
     }

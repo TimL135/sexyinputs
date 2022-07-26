@@ -17,7 +17,6 @@ test("email", async () => {
 });
 test("password", async () => {
   const input = wrapper.find("input[type=password]");
-
   await input.setValue("");
   expect(input.element.reportValidity()).toBeFalsy();
   await input.setValue("password");
@@ -34,7 +33,7 @@ test("number", async () => {
   const input = wrapper.find("input[type=number]");
 
   await input.setValue("text");
-  expect(input.element.value).toEqual("0");
+  expect(input.element.value).toEqual("");
   await input.setValue(8);
   expect(input.element.value).toEqual("8");
 });

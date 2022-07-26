@@ -8,10 +8,13 @@
     <input
       v-bind="$attrs"
       class="form-control shadow-none"
-      type="email"
+      type="number"
       :value="modelValue"
       @input="updateValue"
-      :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"
+      :class="[
+        { dirty: typeof modelValue == 'number' },
+        error && labelBorder ? 'mt-4' : '',
+      ]"
       :style="[
         checkButton || sideInputType
           ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`
@@ -61,6 +64,7 @@ const emit = defineEmits(["update:modelValue", "update:sideInputVModel"]);
 const props = withDefaults(
   defineProps<{
     modelValue: string;
+    controlInput?: boolean;
     error?: string;
     errorColor?: string;
     labelBorder?: boolean;
@@ -77,12 +81,14 @@ const props = withDefaults(
     borderColor?: string;
   }>(),
   {
+    controlInput: true,
     errorColor: "red",
     sideWidth: "20%",
   }
 );
 const {
   modelValue,
+  controlInput,
   error,
   errorColor,
   labelBorder,
@@ -124,7 +130,18 @@ async function affirm() {
 }
 function updateValue(event: any) {
   //correct the value if necessary and update it
-  emit("update:modelValue", event.target.value);
+  if (controlInput.value) {
+    let inputValue = event.target.value * 1;
+    if (event.target.max) {
+      if (inputValue > event.target.max) inputValue = event.target.max * 1;
+    }
+    if (event.target.min) {
+      if (inputValue < event.target.min) inputValue = event.target.min * 1;
+    }
+    if (event.target.value) event.target.value = inputValue;
+  }
+  if (event.target.value) emit("update:modelValue", event.target.value * 1);
+  else emit("update:modelValue", event.target.value);
 }
 function updateSideValue(event: any) {
   //update the sideInput value
@@ -162,6 +179,11 @@ function updateSideValue(event: any) {
     border: 1px solid;
     border-color: v-bind(borderColorComputed);
     border-radius: 0.5rem;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
   button,
   input.sideInput {
