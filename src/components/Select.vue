@@ -217,7 +217,10 @@ const inputWidth = computed(() => {
 
 const filteredItems = computed(() => {
   //options that are still possible
-  const regexp = new RegExp(escapeRegExp(modelValue.value), "i");
+  let regexp: RegExp;
+  if (options.value?.length > 50)
+    regexp = new RegExp(escapeRegExp(modelValue.value), "i");
+  else regexp = new RegExp(escapeRegExp("^" + modelValue.value), "i");
   let array = [] as any[];
   try {
     array = options.value?.filter((item) =>
@@ -230,7 +233,8 @@ const filteredItems = computed(() => {
   } catch {
     array = [];
   }
-  return array;
+  if (array.length > 50) return array.slice(0, 50);
+  else return array;
 });
 
 async function affirm() {
