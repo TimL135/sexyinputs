@@ -36,7 +36,7 @@
             <div
                 class="simple-typeahead-list"
                 :class="listClass"
-                :style="checkButton || sideInputType ? `width:${inputWidth}` : ''"
+                :style="[checkButton || sideInputType ? `width:${inputWidth}` : '']"
                 v-if="isListVisible"
             >
                 <div
@@ -75,16 +75,38 @@
             <!-- /sideInput -->
         </div>
         <!-- /options for datalist -->
+
         <!-- error -->
         <div v-if="error" class="error">
             {{ error }}
         </div>
         <!-- /error -->
+        <!-- multiSelect list -->
+        <div
+            v-for="(multi, index) of multiSelect"
+            :key="JSON.stringify(multi)"
+            class="mt-1 d-flex justify-content-between px-2"
+            :class="multiSelectClass(multi)"
+        >
+            {{ multi }}
+            <span @click="emit('deleteItem', index)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path
+                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                    />
+                    <path
+                        fill-rule="evenodd"
+                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                    />
+                </svg>
+            </span>
+        </div>
+        <!-- /multiSelect list -->
     </div>
 </template>
 <script setup lang="ts">
 import { computed, ref, toRefs, useSlots } from 'vue'
-const emit = defineEmits(['update:modelValue', 'update:sideInputVModel', 'onInput', 'onFocus', 'selectItem', 'onBlur'])
+const emit = defineEmits(['update:modelValue', 'update:sideInputVModel', 'onInput', 'onFocus', 'selectItem', 'onBlur', 'deleteItem'])
 const props = withDefaults(
     defineProps<{
         modelValue: string
@@ -106,10 +128,11 @@ const props = withDefaults(
         sideInputVModel?: any
         placeholder: string
         borderColor?: string
-        selectedProjection?: Function
         optionProjection?: Function
         listItemClass?: Function
+        multiSelectClass?: Function
         options: any[]
+        multiSelect: any[]
     }>(),
     {
         noElementMessage: 'not found',
@@ -117,13 +140,13 @@ const props = withDefaults(
         selectOnBlur: true,
         errorColor: 'red',
         sideWidth: '20%',
-        selectedProjection: (item: any) => {
-            return item
-        },
         optionProjection: (item: any) => {
             return item
         },
         listItemClass: (item: any) => {
+            return ''
+        },
+        multiSelectClass: (item: any) => {
             return ''
         },
     }
@@ -148,9 +171,9 @@ const {
     sideInputVModel,
     placeholder,
     borderColor,
-    selectedProjection,
     optionProjection,
     options,
+    multiSelect,
 } = toRefs(props)
 const id = ref(JSON.stringify(Math.random()))
 const isInputFocus = ref(false)
@@ -183,6 +206,13 @@ const filteredItems = computed(() => {
     } catch {
         array = []
     }
+    for (let element of multiSelect.value) {
+        if (array.findIndex(e => e == element) != -1)
+            array.splice(
+                array.findIndex(e => e == element),
+                1
+            )
+    }
     if (array.length > 50) return array.slice(0, 50)
     else return array
 })
@@ -206,6 +236,7 @@ function onInput(event: Event) {
 function onFocus() {
     //is executed when the selectInput is focussed
     isListVisible.value = true
+
     emit('onFocus', {
         modelValue: modelValue.value,
         options: filteredItems.value,
@@ -215,6 +246,7 @@ function onFocus() {
 function onBlur() {
     //is executed when the selectInput is no longer focused
     isListVisible.value = false
+
     if (controlInput.value) {
         if (!filteredItems.value?.some(e => optionProjection.value(e) == modelValue.value)) {
             updateValue('')
@@ -276,7 +308,6 @@ function updateSideValue(event: any) {
     text-align: start;
     font-size: 0.8rem;
 }
-
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
@@ -288,7 +319,6 @@ function updateSideValue(event: any) {
         top: 0.5rem;
         left: 0.2rem;
     }
-
     input {
         text-align: start;
         padding-left: 1rem;
@@ -299,7 +329,6 @@ function updateSideValue(event: any) {
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
     }
-
     button,
     input.sideInput {
         align-items: center;
@@ -319,14 +348,12 @@ function updateSideValue(event: any) {
         background-color: white;
         justify-content: center;
         outline: none;
-
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
     }
-
     input + .text {
         align-items: center;
         position: absolute;
@@ -345,7 +372,6 @@ function updateSideValue(event: any) {
         border-radius: 0.5rem;
         transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out;
     }
-
     input:focus + .text,
     input.dirty + .text {
         background-color: white;
@@ -354,7 +380,6 @@ function updateSideValue(event: any) {
         padding: 0 0.3rem;
         color: black;
         transform: translate(0, -1.15rem);
-
         &.text.withBorder:after {
             content: '';
             position: absolute;
@@ -370,25 +395,20 @@ function updateSideValue(event: any) {
         }
     }
 }
-
 //select
 .simple-typeahead {
     position: relative;
     width: 100%;
-
     & > input {
         margin-bottom: 0;
     }
-
     .simple-typeahead-list {
         position: absolute;
         width: 100%;
         max-height: 60vh;
-
         @media (min-width: 900px) {
             max-height: 30vh;
         }
-
         overflow-y: auto;
         background-color: #fafafa;
         border-radius: 0 0 0.5rem 0.5rem;
@@ -397,18 +417,15 @@ function updateSideValue(event: any) {
         border-top: none;
         z-index: 9999;
         cursor: pointer;
-
         .simple-typeahead-list-item {
             border-bottom: 1px solid;
             border-color: v-bind(borderColorComputed);
             // border-right: 1px solid;
             padding: 0.6rem 1rem;
-
             &:last-child {
                 border-bottom: none;
             }
         }
-
         &::-webkit-scrollbar-track {
             border-radius: 0 0 0.5rem 0;
             background-color: transparent;

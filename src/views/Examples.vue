@@ -92,24 +92,15 @@
                 data-test="multiSelect"
                 side-input-type="number"
             ></MultiSelect>
+            <div class="w-25">
+                <Button type="button"><template v-slot:button>Test</template></Button>
+            </div>
         </form>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import SexyInput from '../components/SexyInput.vue'
-import Email from '../components/Email.vue'
-import Search from '../components/Search.vue'
-import Text from '../components/Text.vue'
-import Password from '../components/Password.vue'
-import Number from '../components/Number.vue'
-import Date from '../components/Date.vue'
-import Time from '../components/Time.vue'
-import File from '../components/File.vue'
-import Textarea from '../components/Textarea.vue'
-import Range from '../components/Range.vue'
-import Select from '../components/Select.vue'
-import MultiSelect from '../components/MultiSelect.vue'
+import * as Inputs from '../components/SexyInputs/index'
 
 export default defineComponent({
     setup() {
@@ -117,21 +108,7 @@ export default defineComponent({
             console,
         }
     },
-    components: {
-        SexyInput,
-        Email,
-        Search,
-        Text,
-        Password,
-        Number,
-        Date,
-        Time,
-        File,
-        Textarea,
-        Range,
-        Select,
-        MultiSelect,
-    },
+    components: { ...Inputs },
     data() {
         return {
             key: '',
