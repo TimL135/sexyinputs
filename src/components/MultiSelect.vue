@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-3 shadow-none">
+    <div class="mt-3">
         <!-- options for datalist -->
         <div class="simple-typeahead input-contain">
             <!-- icon -->
@@ -22,7 +22,7 @@
                 ]"
                 :class="{ dirty: modelValue }"
                 type="text"
-                :value="selectedProjection(modelValue) || modelValue"
+                :value="optionProjection(modelValue) || modelValue"
                 @input="onInput"
                 @focus="onFocus"
                 @blur="onBlur"
@@ -39,42 +39,48 @@
                 :style="[checkButton || sideInputType ? `width:${inputWidth}` : '']"
                 v-if="isListVisible"
             >
-                <div v-if="$slots['list-header']">
-                    <slot name="list-header"></slot>
-                </div>
                 <div
                     class="simple-typeahead-list-item"
-                    :class="[
-                        {
-                            'simple-typeahead-list-item-active': currentSelectionIndex == index,
-                        },
-                        listItemClass(optionProjection(item)),
-                    ]"
+                    :class="listItemClass(item)"
                     v-for="(item, index) in filteredItems"
                     :key="index"
                     @mousedown.prevent
                     @click.stop="selectItem(item)"
-                    @mouseenter="currentSelectionIndex = index"
                 >
-                    <span class="simple-typeahead-list-item-text" :data-text="optionProjection(item)" v-if="$slots['list-item-text']">
-                        <slot name="list-item-text" :item="item" :optionProjection="optionProjection" :boldMatchText="boldMatchText"></slot>
-                    </span>
                     <span
                         class="simple-typeahead-list-item-text"
                         :data-text="optionProjection(item)"
                         v-html="boldMatchText(optionProjection(item))"
-                        v-else
                     ></span>
                 </div>
                 <div v-if="!filteredItems.length" :class="listItemClass(noElementMessage)">
                     {{ noElementMessage }}
                 </div>
-                <div v-if="$slots['list-footer']">
-                    <slot name="list-footer"></slot>
-                </div>
             </div>
+            <!-- sideButton -->
+            <button v-if="checkButton" :type="btnType" @click="affirm()" :class="btnClass">
+                <slot name="button"></slot>
+            </button>
+            <!-- /sideButton -->
+            <!-- sideInput -->
+            <input
+                v-if="sideInputType"
+                class="sideInput"
+                :type="sideInputType"
+                :class="sideInputClass"
+                :maxlength="sideInputMaxLength"
+                @input="updateSideValue"
+                :value="sideInputVModel"
+            />
+            <!-- /sideInput -->
         </div>
         <!-- /options for datalist -->
+
+        <!-- error -->
+        <div v-if="error" class="error">
+            {{ error }}
+        </div>
+        <!-- /error -->
         <!-- multiSelect list -->
         <div
             v-for="(multi, index) of multiSelect"
@@ -96,27 +102,6 @@
             </span>
         </div>
         <!-- /multiSelect list -->
-        <!-- sideButton -->
-        <button v-if="checkButton" :type="btnType" @click="affirm()" :class="btnClass">
-            <slot name="button"></slot>
-        </button>
-        <!-- /sideButton -->
-        <!-- sideInput -->
-        <input
-            v-if="sideInputType"
-            class="sideInput"
-            :type="sideInputType"
-            :class="sideInputClass"
-            :maxlength="sideInputMaxLength"
-            @input="updateSideValue"
-            :value="sideInputVModel"
-        />
-        <!-- /sideInput -->
-        <!-- error -->
-        <div v-if="error" class="error">
-            {{ error }}
-        </div>
-        <!-- /error -->
     </div>
 </template>
 <script setup lang="ts">
@@ -199,7 +184,6 @@ const id = ref(JSON.stringify(Math.random()))
 const isInputFocus = ref(false)
 const slots = useSlots()
 const isListVisible = ref(false)
-const currentSelectionIndex = ref(0)
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -248,9 +232,6 @@ async function affirm() {
 }
 function onInput(event: Event) {
     //is executed when something is entered in selectInput.
-    if (isListVisible.value && currentSelectionIndex.value >= filteredItems.value.length) {
-        currentSelectionIndex.value = (filteredItems.value.length || 1) - 1
-    }
     updateValue(event)
     emit('onInput', {
         modelValue: modelValue.value,
@@ -299,7 +280,6 @@ function onBlur() {
 async function selectItem(item: any) {
     //will be executed when an option is selected
     await updateValue(optionProjection.value(item))
-    currentSelectionIndex.value = 0
     document.getElementById(id.value)?.blur()
     if (!selectOnBlur) emit('selectItem', item)
 }
@@ -419,10 +399,6 @@ function updateSideValue(event: any) {
             border-color: v-bind(borderColorComputed);
         }
     }
-    input:focus + .text {
-        border-color: var(--navbarColor1);
-        color: var(--navbarColor1);
-    }
 }
 //select
 .simple-typeahead {
@@ -451,9 +427,6 @@ function updateSideValue(event: any) {
             border-color: v-bind(borderColorComputed);
             // border-right: 1px solid;
             padding: 0.6rem 1rem;
-            &.simple-typeahead-list-item-active {
-                background-color: #e1e1e1;
-            }
             &:last-child {
                 border-bottom: none;
             }
