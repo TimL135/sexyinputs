@@ -15,8 +15,8 @@
                     checkButton || sideInputType ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}` : '',
                     isListVisible
                         ? checkButton || sideInputType
-                            ? 'border-radius: 0.5rem 0 0 0;border: 2px solid'
-                            : 'border-radius: 0.5rem 0.5rem 0 0;border: 2px solid'
+                            ? 'border-radius: 0.5rem 0 0 0;border-width: 2px '
+                            : 'border-radius: 0.5rem 0.5rem 0 0;border-width: 2px '
                         : '',
                     checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;',
                 ]"
@@ -53,7 +53,7 @@
                         v-html="boldMatchText(optionProjection(item))"
                     ></span>
                 </div>
-                <div v-if="!filteredItems.length" :class="listItemClass(noElementMessage)">
+                <div v-if="!filteredItems.length" class="simple-typeahead-list-item" :class="listItemClass(noElementMessage)">
                     {{ noElementMessage }}
                 </div>
             </div>
