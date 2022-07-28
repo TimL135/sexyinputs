@@ -115,6 +115,8 @@
             <div class="w-50">
                 <Button type="button"><template v-slot:button>Test</template></Button>
             </div>
+            <Checkbox v-model="checkbox"><template v-slot:text>hello world</template></Checkbox>
+            <Radiobuttons v-model="radiobutton" :options="radioOptions" :row="true"></Radiobuttons>
         </form>
     </div>
 </template>
@@ -150,6 +152,14 @@ export default defineComponent({
             text: '',
             search: '',
             errors: {} as any,
+            checkbox: false,
+            radiobutton: '1',
+            radioOptions: [
+                { value: 1, text: 'eins' },
+                { value: 2, text: 'zwei' },
+                { value: 3, text: 'drei' },
+                { value: 4, text: 'vier' },
+            ],
         }
     },
 

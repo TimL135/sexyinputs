@@ -12,5 +12,7 @@ import Range from './Range.vue'
 import Select from './Select.vue'
 import MultiSelect from './MultiSelect.vue'
 import Button from './Button.vue'
+import Checkbox from './Checkbox.vue'
+import Radiobuttons from './Radiobuttons.vue'
 
-export { Email, Search, Text, Password, Number, Date, Time, File, MultiFile, Textarea, Range, Select, MultiSelect, Button }
+export { Email, Search, Text, Password, Number, Date, Time, File, MultiFile, Textarea, Range, Select, MultiSelect, Button, Checkbox, Radiobuttons }
