@@ -51,7 +51,7 @@ const checkIcon = computed(() => {
 
 function updateValue(event: any) {
     //correct the value if necessary and update it
-    emit('update:modelValue', event.target.value)
+    emit('update:modelValue', Object.values(event.target.files)[0])
 }
 </script>
 <style scoped lang="scss">
@@ -78,7 +78,8 @@ function updateValue(event: any) {
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
         &::-webkit-file-upload-button {
-            display: none;
+            background-color: transparent !important;
+            border: none;
         }
     }
     input + .text {

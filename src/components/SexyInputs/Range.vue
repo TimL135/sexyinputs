@@ -11,8 +11,9 @@
             type="range"
             :value="modelValue"
             @input="updateValue"
+            :id="id"
             :class="[error && labelBorder ? 'mt-4' : '']"
-            :style="[`border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}`, checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;']"
+            :style="[`width:${inputWidth}`, checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;']"
             @focus="isInputFocus = true"
             @blur="isInputFocus = false"
             autocomplete="off"
@@ -24,9 +25,11 @@
         <!-- /placeholder -->
         <!-- sideInput for rangeInput -->
         <input
+            v-if="sideWidth != '0%'"
             type="number"
             class="sideInput"
             @input="updateValue"
+            @blur="roundOnBlur"
             :value="modelValue"
             :style="sideInputStyle"
             :min="element?.min || 0"
@@ -46,7 +49,7 @@ const emit = defineEmits(['update:modelValue', 'update:sideInputVModel'])
 const props = withDefaults(
     defineProps<{
         modelValue: number
-        controlInput: boolean
+        controlInput?: boolean
         error?: string
         errorColor?: string
         labelBorder?: boolean
@@ -65,9 +68,7 @@ const props = withDefaults(
 )
 const { modelValue, controlInput, error, errorColor, labelBorder, labelClass, sideWidth, sideInputStyle, placeholder, borderColor } = toRefs(props)
 onMounted(() => {
-    setTimeout(() => {
-        element.value = document.getElementById(id.value) as HTMLInputElement
-    }, 1)
+    element.value = document.getElementById(id.value) as HTMLInputElement
 })
 const element = ref()
 const id = ref(JSON.stringify(Math.random()))
@@ -95,14 +96,20 @@ const rangeTrackSize = computed(() => {
 })
 function updateValue(event: any) {
     //correct the value if necessary and update it
-    if (controlInput) {
+    if (element.value.step && (event.target.value * 1) % element.value.step != 0) return
+    if (controlInput.value) {
         let inputValue = event.target.value * 1
         if (inputValue > (event.target.max || 100)) inputValue = event.target.max * 1 || 100
         if (inputValue < (event.target.min || 0)) inputValue = event.target.min * 1 || 0
         if (isNaN(inputValue)) inputValue = 0
         event.target.value = inputValue
     }
-    emit('update:modelValue', event.target.value * 1)
+    if (event.target.value) emit('update:modelValue', event.target.value * 1)
+    else emit('update:modelValue', event.target.value)
+}
+function roundOnBlur(event: any) {
+    if (element.value.step) event.target.value = Math.round(event.target.value / element.value?.step) * element.value?.step
+    updateValue(event)
 }
 </script>
 <style scoped lang="scss">
@@ -118,7 +125,6 @@ function updateValue(event: any) {
 }
 .input-contain {
     position: relative;
-    border-radius: 0.5rem;
 
     .icon {
         background-color: transparent;
@@ -135,7 +141,7 @@ function updateValue(event: any) {
         width: 100%;
         border: 1px solid;
         border-color: v-bind(borderColorComputed);
-        border-radius: 0.5rem;
+        border-radius: 0.5rem 0 0 0.5rem;
         -webkit-appearance: none;
         appearance: none;
         border-radius: 0.5rem 0 0 0.5rem;

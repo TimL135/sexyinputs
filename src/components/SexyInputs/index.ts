@@ -6,10 +6,11 @@ import Number from './Number.vue'
 import Date from './Date.vue'
 import Time from './Time.vue'
 import File from './File.vue'
+import MultiFile from './MultiFile.vue'
 import Textarea from './Textarea.vue'
 import Range from './Range.vue'
 import Select from './Select.vue'
 import MultiSelect from './MultiSelect.vue'
 import Button from './Button.vue'
 
-export { Email, Search, Text, Password, Number, Date, Time, File, Textarea, Range, Select, MultiSelect, Button }
+export { Email, Search, Text, Password, Number, Date, Time, File, MultiFile, Textarea, Range, Select, MultiSelect, Button }

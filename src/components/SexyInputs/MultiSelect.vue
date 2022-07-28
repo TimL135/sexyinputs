@@ -84,7 +84,7 @@
         <!-- multiSelect list -->
         <div
             v-for="(multi, index) of multiSelect"
-            :key="JSON.stringify(multi)"
+            :key="JSON.stringify(multi + index)"
             class="mt-1 d-flex justify-content-between px-2"
             :class="multiSelectClass(multi)"
         >
@@ -328,6 +328,21 @@ function updateSideValue(event: any) {
         border: 1px solid;
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
+    }
+    button {
+        &:hover {
+            @media (pointer: fine) {
+                filter: brightness(85%);
+            }
+        }
+        &:active {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+            @media (pointer: coarse) {
+                filter: brightness(85%);
+            }
+        }
     }
     button,
     input.sideInput {

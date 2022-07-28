@@ -159,6 +159,21 @@ function updateSideValue(event: any) {
             display: none;
         }
     }
+    button {
+        &:hover {
+            @media (pointer: fine) {
+                filter: brightness(85%);
+            }
+        }
+        &:active {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+            @media (pointer: coarse) {
+                filter: brightness(85%);
+            }
+        }
+    }
     button,
     input.sideInput {
         align-items: center;

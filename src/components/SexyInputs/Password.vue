@@ -146,6 +146,20 @@ function updateValue(event: any) {
         background-color: white;
         justify-content: center;
         outline: none;
+
+        &:hover {
+            @media (pointer: fine) {
+                filter: brightness(85%);
+            }
+        }
+        &:active {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+            @media (pointer: coarse) {
+                filter: brightness(85%);
+            }
+        }
     }
     input + .text {
         align-items: center;

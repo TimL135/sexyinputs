@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex justify-content-center">
-        <form action="" style="width: 25%" @submit.prevent="login">
+        <form action="" class="formWidth" @submit.prevent="login">
             <Search placeholder="search" v-model="search" :label-border="true">
                 <template v-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -35,8 +35,28 @@
             </Date>
             <Time placeholder="Time" v-model="time" :error="errors.time"></Time>
             <File placeholder="File" v-model="file"></File>
+            <MultiFile
+                placeholder="Multi File"
+                :file-array="fileArray"
+                :preview="true"
+                @addFile="
+                    newFiles => {
+                        console.log(newFiles)
+                        fileArray = fileArray.concat(...newFiles)
+                        fileArray = fileArray.filter((v, i, a) => a.findIndex(e => e.name == v.name) === i)
+                    }
+                "
+                @deleteFile="
+                    index => {
+                        fileArray = fileArray.filter((v, i) => i != index)
+                    }
+                "
+            >
+                <template v-slot:button>datei auswählen</template>
+            </MultiFile>
             <Textarea placeholder="Text" v-model="text" :labelBorder="true"></Textarea>
-            <Range placeholder="Volume" v-model="range" sideWidth="15%"></Range>
+            <Range placeholder="Volume" v-model="range" sideWidth="15%" :controlInput="false"></Range>
+            <!-- <Range placeholder="Volume" v-model="range" sideWidth="15%" step="10"></Range> -->
             <Select
                 placeholder="Select"
                 v-model="select"
@@ -92,7 +112,7 @@
                 data-test="multiSelect"
                 side-input-type="number"
             ></MultiSelect>
-            <div class="w-25">
+            <div class="w-50">
                 <Button type="button"><template v-slot:button>Test</template></Button>
             </div>
         </form>
@@ -119,6 +139,8 @@ export default defineComponent({
             password: '',
             date: '',
             file: null,
+            multiFile: null,
+            fileArray: [] as any[],
             select: '',
             select2: '',
             multiSelectText: '',
@@ -149,3 +171,10 @@ export default defineComponent({
     },
 })
 </script>
+<style lang="scss">
+.formWidth {
+    @media (min-width: 850px) {
+        width: 25vw;
+    }
+}
+</style>

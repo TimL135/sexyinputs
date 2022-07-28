@@ -156,6 +156,21 @@ function updateSideValue(event: any) {
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
     }
+    button {
+        &:hover {
+            @media (pointer: fine) {
+                filter: brightness(85%);
+            }
+        }
+        &:active {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+            @media (pointer: coarse) {
+                filter: brightness(85%);
+            }
+        }
+    }
     button,
     input.sideInput {
         align-items: center;
