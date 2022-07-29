@@ -15,7 +15,7 @@
         </label>
         <!-- /placeholder -->
         <!-- preview -->
-        <div class="mt-1 px-2 me-1" :class="fileClass(modelValue)" style="border: 1px solid black" v-if="modelValue && preview">
+        <div class="mt-1 py-1" :class="fileClass(modelValue)" style="border: 1px solid black; border-radius: 0.5rem" v-if="modelValue && preview">
             <div class="d-flex justify-content-center">{{ modelValue.name }}</div>
             <div class="d-flex justify-content-center"><img :src="loadFile(modelValue)" style="height: 5rem" alt="" /></div>
         </div>
@@ -29,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import { computed, toRefs, useSlots } from 'vue'
-const emit = defineEmits(['update:modelValue', 'deleteFile'])
+const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
         modelValue: any
@@ -44,7 +44,6 @@ const props = withDefaults(
     }>(),
     {
         errorColor: 'red',
-        sideWidth: '20%',
         preview: false,
         fileClass: (item: any) => {
             return ''

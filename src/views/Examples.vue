@@ -42,16 +42,7 @@
                 </template>
             </Date>
             <Time placeholder="Time" v-model="time" :error="errors.time"></Time>
-            <File
-                placeholder="File"
-                v-model="file"
-                :preview="true"
-                @deleteFile="
-                    () => {
-                        file = null
-                    }
-                "
-            ></File>
+            <File placeholder="File" v-model="file" :preview="true"></File>
             <MultiFile
                 placeholder="Multi File"
                 :file-array="fileArray"
@@ -102,6 +93,8 @@
                 :selectOnBlur="false"
                 :controlInput="false"
                 data-test="select2"
+                :match-from-start="true"
+                btn-type="button"
             >
                 <template v-slot:button>test</template>
             </Select>

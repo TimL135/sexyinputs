@@ -5,15 +5,15 @@
         <!-- error -->
     </div>
     <!-- multiFile list -->
-    <div :class="buttonWidth >= 400 ? 'multiFile' : ''">
+    <div :class="buttonWidth >= 400 && fileArray.length > 1 ? 'multiFile' : ''">
         <div
             v-for="(file, index) of fileArray"
             :key="JSON.stringify(file.name + index)"
-            class="mt-1 multiFileGrid px-2 me-1"
-            :class="multiFileClass(file)"
-            style="border: 1px solid black"
+            class="mt-1 multiFileGrid py-1"
+            :class="[multiFileClass(file), index % 2 == 0 ? 'me-1' : '']"
+            style="border: 1px solid black; border-radius: 0.5rem"
         >
-            <div style="grid-area: name">{{ file.name }}</div>
+            <div style="grid-area: name" class="d-flex justify-content-center">{{ file.name }}</div>
             <div v-if="preview" style="grid-area: pic" class="d-flex justify-content-center">
                 <img :src="loadFile(file)" style="height: 5rem" alt="" />
             </div>
@@ -51,7 +51,6 @@ const props = withDefaults(
     {
         borderColor: 'black',
         errorColor: 'red',
-        sideWidth: '20%',
         preview: false,
         multiFileClass: (item: any) => {
             return ''
@@ -68,10 +67,10 @@ onMounted(() => {
     buttonWidth.value = document.getElementById(id.value + 'button')?.clientWidth
     window.addEventListener('resize', onResize)
 })
-const id = ref(JSON.stringify(Math.random()))
 onUnmounted(() => {
     window.removeEventListener('resize', onResize)
 })
+const id = ref(JSON.stringify(Math.random()))
 const buttonWidth = ref()
 function onResize() {
     buttonWidth.value = document.getElementById(id.value + 'button')?.clientWidth

@@ -2,7 +2,7 @@
     <div class="mt-3">
         <div class="simple-typeahead input-contain">
             <!-- icon -->
-            <div v-if="checkIcon && (isInputFocus || modelValue)" class="icon">
+            <div v-if="checkIcon && (isListVisible || modelValue)" class="icon">
                 <slot name="icon"></slot>
             </div>
             <!-- /icon -->
@@ -53,7 +53,7 @@
                         v-html="boldMatchText(optionProjection(item))"
                     ></span>
                 </div>
-                <div v-if="!filteredItems.length" class="simple-typeahead-list-item" :class="listItemClass(noElementMessage)">
+                <div v-if="!filteredItems?.length" class="simple-typeahead-list-item" :class="listItemClass(noElementMessage)">
                     {{ noElementMessage }}
                 </div>
             </div>
@@ -109,6 +109,7 @@ const props = withDefaults(
         optionProjection?: Function
         listItemClass?: Function
         options: any[]
+        matchFromStart?: boolean
     }>(),
     {
         noElementMessage: 'not found',
@@ -116,6 +117,7 @@ const props = withDefaults(
         selectOnBlur: true,
         errorColor: 'red',
         sideWidth: 20,
+        matchFromStart: false,
         optionProjection: (item: any) => {
             return item
         },
@@ -146,9 +148,9 @@ const {
     borderColor,
     optionProjection,
     options,
+    matchFromStart,
 } = toRefs(props)
 const id = ref(JSON.stringify(Math.random()))
-const isInputFocus = ref(false)
 const slots = useSlots()
 const isListVisible = ref(false)
 const borderColorComputed = computed(() => {
@@ -162,7 +164,7 @@ const checkButton = computed(() => {
 })
 const inputWidth = computed(() => {
     let width = 100
-    if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0
+    if (sideInputType || checkButton) width -= sideWidth?.value || 0
     return width + '%'
 })
 const sideWidthComputed = computed(() => {
@@ -172,7 +174,7 @@ const sideWidthComputed = computed(() => {
 const filteredItems = computed(() => {
     //options that are still possible
     let regexp: RegExp
-    if (options.value?.length > 50) regexp = new RegExp('^' + escapeRegExp(modelValue.value), 'i')
+    if (matchFromStart.value) regexp = new RegExp('^' + escapeRegExp(modelValue.value), 'i')
     else regexp = new RegExp(escapeRegExp(modelValue.value), 'i')
     let array = [] as any[]
     try {
