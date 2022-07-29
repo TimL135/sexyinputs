@@ -13,7 +13,7 @@
             :class="[multiFileClass(file), index % 2 == 0 ? 'me-1' : '']"
             style="border: 1px solid black; border-radius: 0.5rem"
         >
-            <div style="grid-area: name" class="d-flex justify-content-center ms-1">{{ file.name }}</div>
+            <div style="grid-area: name" class="text-center ms-1">{{ file.name }}</div>
             <div v-if="preview" style="grid-area: pic" class="d-flex justify-content-center">
                 <img :src="loadFile(file)" style="height: 5rem" alt="" />
             </div>
@@ -88,14 +88,14 @@ function loadFile(file: any) {
 <style scoped lang="scss">
 .multiFileGrid {
     display: grid;
-    grid-template-columns: 9fr 1fr;
+    grid-template-columns: 1fr 9fr 1fr;
     grid-template-areas:
-        ' name trash '
-        ' pic pic ';
+        '. name trash '
+        '. pic . ';
 }
 .multiFile {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr 1fr;
 }
 
 .error {
