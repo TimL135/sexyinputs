@@ -95,7 +95,7 @@ function loadFile(file: any) {
 }
 .multiFile {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: 1fr 1fr;
 }
 
 .error {
