@@ -16,7 +16,7 @@
         <!-- /placeholder -->
         <!-- preview -->
         <div class="mt-1 py-1" :class="fileClass(modelValue)" style="border: 1px solid black; border-radius: 0.5rem" v-if="modelValue && preview">
-            <div class="d-flex justify-content-center">{{ modelValue.name }}</div>
+            <div class="text-center">{{ modelValue.name }}</div>
             <div class="d-flex justify-content-center"><img :src="loadFile(modelValue)" style="height: 5rem" alt="" /></div>
         </div>
         <!-- /preview -->
