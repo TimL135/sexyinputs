@@ -50,8 +50,8 @@ const props = withDefaults(
 )
 const { modelValue, placeholder, error, errorColor, labelBorder, labelClass, borderColor } = toRefs(props)
 onMounted(() => {
+    //set standard value to current date
     if (modelValue.value.length != 10) {
-        //return when standard value is set
         updateValue(new Date().toISOString().split('T')[0])
     }
 })
@@ -65,13 +65,11 @@ const checkIcon = computed(() => {
     return !!slots.icon
 })
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     if (typeof event == 'string') emit('update:modelValue', event)
     else emit('update:modelValue', event.target.value)
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;

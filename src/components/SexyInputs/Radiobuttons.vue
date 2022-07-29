@@ -1,7 +1,7 @@
 <template>
     <div :class="row ? 'row' : ''">
         <div v-for="option of options" :key="JSON.stringify(option)">
-            <div class="grid mb-2">
+            <div class="d-flex mb-2">
                 <div class="round">
                     <input
                         type="radio"
@@ -13,7 +13,7 @@
                     />
                     <label :for="option.text + id"></label>
                 </div>
-                <div class="ms-4">{{ option.text }}</div>
+                <label class="ms-4" :for="option.text + id" style="cursor: pointer">{{ option.text }}</label>
             </div>
         </div>
     </div>
@@ -23,8 +23,8 @@ import { computed, ref, toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
-        modelValue: any
-        options: any[]
+        modelValue: string | number | boolean
+        options: { text: string; value: string | number | boolean }[]
         row?: boolean
     }>(),
     {
@@ -34,7 +34,6 @@ const props = withDefaults(
 const { modelValue, options, row } = toRefs(props)
 const id = ref(JSON.stringify(Math.random()))
 function updateValue(event: any) {
-    console.log(event?.target.value)
     emit('update:modelValue', event?.target.value)
 }
 const number = computed(() => {
@@ -42,9 +41,6 @@ const number = computed(() => {
 })
 </script>
 <style scoped lang="scss">
-.grid {
-    display: flex;
-}
 .row {
     display: grid;
     grid-template-columns: repeat(v-bind(number), 1fr);
@@ -52,7 +48,6 @@ const number = computed(() => {
 .round {
     position: relative;
 }
-
 .round label {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -64,7 +59,6 @@ const number = computed(() => {
     top: 0;
     width: 28px;
 }
-
 .round label:after {
     border: 2px solid #fff;
     border-top: none;
@@ -78,16 +72,13 @@ const number = computed(() => {
     transform: rotate(-45deg);
     width: 12px;
 }
-
 .round input[type='radio'] {
     visibility: hidden;
 }
-
 .round input[type='radio']:checked + label {
     background-color: #66bb6a;
     border-color: #66bb6a;
 }
-
 .round input[type='radio']:checked + label:after {
     opacity: 1;
 }

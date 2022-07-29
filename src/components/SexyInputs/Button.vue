@@ -8,6 +8,7 @@ button {
     background: white;
     color: black;
     font-size: 1.5rem;
+    border-color: black;
     border-width: 1px;
     border-radius: 0.5rem;
     transition: all 250ms linear;

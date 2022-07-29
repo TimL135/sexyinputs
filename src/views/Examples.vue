@@ -3,14 +3,22 @@
         <form action="" class="formWidth" @submit.prevent="login">
             <Search placeholder="search" v-model="search" :label-border="true">
                 <template v-slot:icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <svg
+                        @click="console.log('f')"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-search"
+                        viewBox="0 0 16 16"
+                    >
                         <path
                             d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
                         />
                     </svg>
                 </template>
             </Search>
-            <Email placeholder="email" v-model="email" :label-border="true">
+            <Email placeholder="email" v-model="email" :label-border="true" errorColor="black">
                 <template v-slot:button>test</template>
             </Email>
             <Password
@@ -34,7 +42,16 @@
                 </template>
             </Date>
             <Time placeholder="Time" v-model="time" :error="errors.time"></Time>
-            <File placeholder="File" v-model="file"></File>
+            <File
+                placeholder="File"
+                v-model="file"
+                :preview="true"
+                @deleteFile="
+                    () => {
+                        file = null
+                    }
+                "
+            ></File>
             <MultiFile
                 placeholder="Multi File"
                 :file-array="fileArray"
@@ -55,8 +72,7 @@
                 <template v-slot:button>datei auswählen</template>
             </MultiFile>
             <Textarea placeholder="Text" v-model="text" :labelBorder="true"></Textarea>
-            <Range placeholder="Volume" v-model="range" sideWidth="15%" :controlInput="false"></Range>
-            <!-- <Range placeholder="Volume" v-model="range" sideWidth="15%" step="10"></Range> -->
+            <Range placeholder="Volume" v-model="range" :sideWidth="15"></Range>
             <Select
                 placeholder="Select"
                 v-model="select"
@@ -153,12 +169,11 @@ export default defineComponent({
             search: '',
             errors: {} as any,
             checkbox: false,
-            radiobutton: '1',
+            radiobutton: '',
             radioOptions: [
                 { value: 1, text: 'eins' },
                 { value: 2, text: 'zwei' },
                 { value: 3, text: 'drei' },
-                { value: 4, text: 'vier' },
             ],
         }
     },
@@ -183,6 +198,7 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .formWidth {
+    width: 80%;
     @media (min-width: 850px) {
         width: 25vw;
     }

@@ -10,12 +10,14 @@
             v-for="(file, index) of fileArray"
             :key="JSON.stringify(file.name + index)"
             class="mt-1 multiFileGrid px-2 me-1"
-            :class="multiSelectClass(file)"
+            :class="multiFileClass(file)"
             style="border: 1px solid black"
         >
             <div style="grid-area: name">{{ file.name }}</div>
-            <div v-if="preview" style="grid-area: pic"><img :src="loadFile(file)" style="height: 5rem" alt="" /></div>
-            <span @click="emit('deleteFile', index)" style="grid-area: trash">
+            <div v-if="preview" style="grid-area: pic" class="d-flex justify-content-center">
+                <img :src="loadFile(file)" style="height: 5rem" alt="" />
+            </div>
+            <span @click="emit('deleteFile', index)" style="grid-area: trash; cursor: pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                     <path
                         d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
@@ -43,7 +45,7 @@ const props = withDefaults(
         error?: string
         errorColor?: string
         borderColor?: string
-        multiSelectClass?: Function
+        multiFileClass?: Function
         preview?: boolean
     }>(),
     {
@@ -51,12 +53,12 @@ const props = withDefaults(
         errorColor: 'red',
         sideWidth: '20%',
         preview: false,
-        multiSelectClass: (item: any) => {
+        multiFileClass: (item: any) => {
             return ''
         },
     }
 )
-const { fileArray, error, errorColor, borderColor, preview, multiSelectClass } = toRefs(props)
+const { fileArray, error, errorColor, borderColor, preview, multiFileClass } = toRefs(props)
 
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
@@ -96,7 +98,7 @@ function loadFile(file: any) {
     display: grid;
     grid-template-columns: auto auto;
 }
-//material inputs
+
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;

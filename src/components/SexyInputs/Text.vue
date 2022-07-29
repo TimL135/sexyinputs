@@ -61,17 +61,17 @@ const props = withDefaults(
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
         btnAction?: Function
-        sideWidth?: string
-        sideInputType?: string
+        sideWidth?: number
+        sideInputType?: 'number' | 'text'
         sideInputClass?: string
         sideInputMaxLength?: string
-        sideInputVModel?: any
+        sideInputVModel?: number | string
         placeholder: string
         borderColor?: string
     }>(),
     {
         errorColor: 'red',
-        sideWidth: '20%',
+        sideWidth: 20,
     }
 )
 const {
@@ -104,7 +104,11 @@ const checkButton = computed(() => {
 })
 const inputWidth = computed(() => {
     let width = 100
-    if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0
+    if (sideInputType || checkButton) width -= sideWidth?.value || 0
+    return width + '%'
+})
+const sideWidthComputed = computed(() => {
+    let width = sideWidth?.value
     return width + '%'
 })
 async function affirm() {
@@ -116,7 +120,6 @@ async function affirm() {
     }
 }
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     emit('update:modelValue', event.target.value)
 }
 function updateSideValue(event: any) {
@@ -125,7 +128,6 @@ function updateSideValue(event: any) {
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
@@ -138,7 +140,6 @@ function updateSideValue(event: any) {
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
-
     .icon {
         background-color: transparent;
         position: absolute;
@@ -181,7 +182,7 @@ function updateSideValue(event: any) {
         bottom: 0;
         left: v-bind(inputWidth);
         right: 0;
-        width: v-bind(sideWidth);
+        width: v-bind(sideWidthComputed);
         border-radius: 0 0.5rem 0.5rem 0;
         border-width: 1px;
         border-color: v-bind(borderColorComputed);

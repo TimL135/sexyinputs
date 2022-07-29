@@ -25,7 +25,7 @@ import { computed, toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
-        modelValue: any
+        modelValue: string
         error?: string
         errorColor?: string
         labelBorder?: boolean
@@ -42,14 +42,11 @@ const { modelValue, error, errorColor, labelBorder, labelClass, placeholder, bor
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
-
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     emit('update:modelValue', event.target.value)
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;

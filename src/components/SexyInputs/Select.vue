@@ -1,6 +1,5 @@
 <template>
     <div class="mt-3">
-        <!-- options for datalist -->
         <div class="simple-typeahead input-contain">
             <!-- icon -->
             <div v-if="checkIcon && (isInputFocus || modelValue)" class="icon">
@@ -33,6 +32,7 @@
                 {{ placeholder }}
             </label>
             <!-- /label for select -->
+            <!-- options for select -->
             <div
                 class="simple-typeahead-list"
                 :class="listClass"
@@ -57,6 +57,7 @@
                     {{ noElementMessage }}
                 </div>
             </div>
+            <!-- /options for select -->
             <!-- sideButton -->
             <button v-if="checkButton" :type="btnType" @click="affirm()" :class="btnClass">
                 <slot name="button"></slot>
@@ -74,7 +75,6 @@
             />
             <!-- /sideInput -->
         </div>
-        <!-- /options for datalist -->
         <!-- error -->
         <div v-if="error" class="error">
             {{ error }}
@@ -99,11 +99,11 @@ const props = withDefaults(
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
         btnAction?: Function
-        sideWidth?: string
-        sideInputType?: string
+        sideWidth?: number
+        sideInputType?: 'number' | 'text'
         sideInputClass?: string
         sideInputMaxLength?: string
-        sideInputVModel?: any
+        sideInputVModel?: number | string
         placeholder: string
         borderColor?: string
         optionProjection?: Function
@@ -115,7 +115,7 @@ const props = withDefaults(
         controlInput: true,
         selectOnBlur: true,
         errorColor: 'red',
-        sideWidth: '20%',
+        sideWidth: 20,
         optionProjection: (item: any) => {
             return item
         },
@@ -165,7 +165,10 @@ const inputWidth = computed(() => {
     if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0
     return width + '%'
 })
-
+const sideWidthComputed = computed(() => {
+    let width = sideWidth?.value
+    return width + '%'
+})
 const filteredItems = computed(() => {
     //options that are still possible
     let regexp: RegExp
@@ -261,7 +264,6 @@ function updateSideValue(event: any) {
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
@@ -271,11 +273,9 @@ function updateSideValue(event: any) {
     text-align: start;
     font-size: 0.8rem;
 }
-
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
-
     .icon {
         background-color: transparent;
         position: absolute;
@@ -283,7 +283,6 @@ function updateSideValue(event: any) {
         top: 0.5rem;
         left: 0.2rem;
     }
-
     input {
         text-align: start;
         padding-left: 1rem;
@@ -319,7 +318,7 @@ function updateSideValue(event: any) {
         bottom: 0;
         left: v-bind(inputWidth);
         right: 0;
-        width: v-bind(sideWidth);
+        width: v-bind(sideWidthComputed);
         border-radius: 0 0.5rem 0.5rem 0;
         border-width: 1px;
         border-color: v-bind(borderColorComputed);
@@ -335,7 +334,6 @@ function updateSideValue(event: any) {
             margin: 0;
         }
     }
-
     input + .text {
         align-items: center;
         position: absolute;
@@ -354,7 +352,6 @@ function updateSideValue(event: any) {
         border-radius: 0.5rem;
         transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out;
     }
-
     input:focus + .text,
     input.dirty + .text {
         background-color: white;
@@ -363,7 +360,6 @@ function updateSideValue(event: any) {
         padding: 0 0.3rem;
         color: black;
         transform: translate(0, -1.15rem);
-
         &.text.withBorder:after {
             content: '';
             position: absolute;
@@ -379,25 +375,20 @@ function updateSideValue(event: any) {
         }
     }
 }
-
 //select
 .simple-typeahead {
     position: relative;
     width: 100%;
-
     & > input {
         margin-bottom: 0;
     }
-
     .simple-typeahead-list {
         position: absolute;
         width: 100%;
         max-height: 60vh;
-
         @media (min-width: 900px) {
             max-height: 30vh;
         }
-
         overflow-y: auto;
         background-color: #fafafa;
         border-radius: 0 0 0.5rem 0.5rem;
@@ -406,28 +397,23 @@ function updateSideValue(event: any) {
         border-top: none;
         z-index: 9999;
         cursor: pointer;
-
         .simple-typeahead-list-item {
             border-bottom: 1px solid;
             border-color: v-bind(borderColorComputed);
             // border-right: 1px solid;
             padding: 0.6rem 1rem;
-
             &:last-child {
                 border-bottom: none;
             }
         }
-
         &::-webkit-scrollbar-track {
             border-radius: 0 0 0.5rem 0;
             background-color: transparent;
         }
-
         &::-webkit-scrollbar {
             width: 12px;
             background-color: transparent;
         }
-
         &::-webkit-scrollbar-thumb {
             border-radius: 0.5rem;
             background-color: #555;

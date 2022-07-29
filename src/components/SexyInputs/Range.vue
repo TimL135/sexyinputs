@@ -25,7 +25,6 @@
         <!-- /placeholder -->
         <!-- sideInput for rangeInput -->
         <input
-            v-if="sideWidth != '0%'"
             type="number"
             class="sideInput"
             @input="updateValue"
@@ -55,7 +54,7 @@ const props = withDefaults(
         labelBorder?: boolean
         labelClass?: string
         btnClass?: string
-        sideWidth?: string
+        sideWidth?: number
         sideInputStyle?: string
         placeholder: string
         borderColor?: string
@@ -63,7 +62,7 @@ const props = withDefaults(
     {
         controlInput: true,
         errorColor: 'red',
-        sideWidth: '20%',
+        sideWidth: 20,
     }
 )
 const { modelValue, controlInput, error, errorColor, labelBorder, labelClass, sideWidth, sideInputStyle, placeholder, borderColor } = toRefs(props)
@@ -83,7 +82,11 @@ const checkIcon = computed(() => {
 
 const inputWidth = computed(() => {
     let width = 100
-    width -= parseInt(sideWidth?.value) || 0
+    width -= sideWidth?.value || 0
+    return width + '%'
+})
+const sideWidthComputed = computed(() => {
+    let width = sideWidth?.value
     return width + '%'
 })
 const rangeTrackSize = computed(() => {
@@ -113,7 +116,6 @@ function roundOnBlur(event: any) {
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
@@ -125,7 +127,6 @@ function roundOnBlur(event: any) {
 }
 .input-contain {
     position: relative;
-
     .icon {
         background-color: transparent;
         position: absolute;
@@ -193,7 +194,7 @@ function roundOnBlur(event: any) {
         bottom: 0;
         left: v-bind(inputWidth);
         right: 0;
-        width: v-bind(sideWidth);
+        width: v-bind(sideWidthComputed);
         border-radius: 0 0.5rem 0.5rem 0;
         border-width: 1px;
         border-color: v-bind(borderColorComputed);
@@ -202,6 +203,7 @@ function roundOnBlur(event: any) {
         background-color: white;
         justify-content: center;
         outline: none;
+        cursor: text;
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
             -webkit-appearance: none;

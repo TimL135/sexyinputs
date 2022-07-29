@@ -67,13 +67,11 @@ const checkIcon = computed(() => {
     return !!slots.icon
 })
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     if (typeof event == 'string') emit('update:modelValue', event)
     else emit('update:modelValue', event.target.value)
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;

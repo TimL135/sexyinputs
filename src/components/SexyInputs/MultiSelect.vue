@@ -1,6 +1,5 @@
 <template>
     <div class="mt-3">
-        <!-- options for datalist -->
         <div class="simple-typeahead input-contain">
             <!-- icon -->
             <div v-if="checkIcon && (isInputFocus || modelValue)" class="icon">
@@ -33,6 +32,7 @@
                 {{ placeholder }}
             </label>
             <!-- /label for select -->
+            <!-- options for select -->
             <div
                 class="simple-typeahead-list"
                 :class="listClass"
@@ -57,6 +57,7 @@
                     {{ noElementMessage }}
                 </div>
             </div>
+            <!-- /options for select -->
             <!-- sideButton -->
             <button v-if="checkButton" :type="btnType" @click="affirm()" :class="btnClass">
                 <slot name="button"></slot>
@@ -74,8 +75,6 @@
             />
             <!-- /sideInput -->
         </div>
-        <!-- /options for datalist -->
-
         <!-- error -->
         <div v-if="error" class="error">
             {{ error }}
@@ -89,7 +88,7 @@
             :class="multiSelectClass(multi)"
         >
             {{ multi }}
-            <span @click="emit('deleteItem', index)">
+            <span @click="emit('deleteItem', index)" style="cursor: pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                     <path
                         d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
@@ -121,8 +120,8 @@ const props = withDefaults(
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
         btnAction?: Function
-        sideWidth?: string
-        sideInputType?: string
+        sideWidth?: number
+        sideInputType?: 'number' | 'text'
         sideInputClass?: string
         sideInputMaxLength?: string
         sideInputVModel?: any
@@ -139,7 +138,7 @@ const props = withDefaults(
         controlInput: true,
         selectOnBlur: true,
         errorColor: 'red',
-        sideWidth: '20%',
+        sideWidth: 20,
         optionProjection: (item: any) => {
             return item
         },
@@ -190,10 +189,13 @@ const checkButton = computed(() => {
 })
 const inputWidth = computed(() => {
     let width = 100
-    if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0
+    if (sideInputType || checkButton) width -= sideWidth?.value || 0
     return width + '%'
 })
-
+const sideWidthComputed = computed(() => {
+    let width = sideWidth?.value
+    return width + '%'
+})
 const filteredItems = computed(() => {
     //options that are still possible
     let regexp: RegExp
@@ -236,7 +238,6 @@ function onInput(event: Event) {
 function onFocus() {
     //is executed when the selectInput is focussed
     isListVisible.value = true
-
     emit('onFocus', {
         modelValue: modelValue.value,
         options: filteredItems.value,
@@ -246,7 +247,6 @@ function onFocus() {
 function onBlur() {
     //is executed when the selectInput is no longer focused
     isListVisible.value = false
-
     if (controlInput.value) {
         if (!filteredItems.value?.some(e => optionProjection.value(e) == modelValue.value)) {
             updateValue('')
@@ -288,17 +288,14 @@ function boldMatchText(text: string) {
     return text.replace(regexp, '<strong>$1</strong>')
 }
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     if (typeof event == 'string') emit('update:modelValue', event)
     else emit('update:modelValue', event.target.value)
 }
 function updateSideValue(event: any) {
-    //update the sideInput value
     emit('update:sideInputVModel', event.target.value)
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
@@ -354,7 +351,7 @@ function updateSideValue(event: any) {
         bottom: 0;
         left: v-bind(inputWidth);
         right: 0;
-        width: v-bind(sideWidth);
+        width: v-bind(sideWidthComputed);
         border-radius: 0 0.5rem 0.5rem 0;
         border-width: 1px;
         border-color: v-bind(borderColorComputed);

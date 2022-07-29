@@ -65,13 +65,13 @@ const props = withDefaults(
         labelBorder?: boolean
         labelClass?: string
         btnClass?: string
-        sideWidth?: string
+        sideWidth?: number
         placeholder: string
         borderColor?: string
     }>(),
     {
         errorColor: 'red',
-        sideWidth: '20%',
+        sideWidth: 20,
     }
 )
 const { modelValue, error, errorColor, labelBorder, labelClass, btnClass, sideWidth, placeholder, borderColor } = toRefs(props)
@@ -87,17 +87,18 @@ const checkIcon = computed(() => {
 
 const inputWidth = computed(() => {
     let width = 100
-    width -= parseInt(sideWidth?.value) || 0
+    width -= sideWidth?.value || 0
     return width + '%'
 })
-
+const sideWidthComputed = computed(() => {
+    let width = sideWidth?.value
+    return width + '%'
+})
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     emit('update:modelValue', event.target.value)
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;
@@ -137,7 +138,7 @@ function updateValue(event: any) {
         bottom: 0;
         left: v-bind(inputWidth);
         right: 0;
-        width: v-bind(sideWidth);
+        width: v-bind(sideWidthComputed);
         border-radius: 0 0.5rem 0.5rem 0;
         border-width: 1px;
         border-color: v-bind(borderColorComputed);

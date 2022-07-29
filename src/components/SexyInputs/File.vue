@@ -4,7 +4,6 @@
             v-bind="$attrs"
             class="form-control shadow-none"
             type="file"
-            :value="modelValue"
             @input="updateValue"
             :class="error && labelBorder ? 'mt-4' : ''"
             :style="checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;'"
@@ -15,6 +14,12 @@
             {{ placeholder }}
         </label>
         <!-- /placeholder -->
+        <!-- preview -->
+        <div class="mt-1 px-2 me-1" :class="fileClass(modelValue)" style="border: 1px solid black" v-if="modelValue && preview">
+            <div class="d-flex justify-content-center">{{ modelValue.name }}</div>
+            <div class="d-flex justify-content-center"><img :src="loadFile(modelValue)" style="height: 5rem" alt="" /></div>
+        </div>
+        <!-- /preview -->
         <!-- error -->
         <div v-if="error" class="error">
             {{ error }}
@@ -24,7 +29,7 @@
 </template>
 <script setup lang="ts">
 import { computed, toRefs, useSlots } from 'vue'
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'deleteFile'])
 const props = withDefaults(
     defineProps<{
         modelValue: any
@@ -34,13 +39,19 @@ const props = withDefaults(
         labelClass?: string
         placeholder: string
         borderColor?: string
+        preview?: boolean
+        fileClass?: Function
     }>(),
     {
         errorColor: 'red',
         sideWidth: '20%',
+        preview: false,
+        fileClass: (item: any) => {
+            return ''
+        },
     }
 )
-const { modelValue, error, errorColor, labelBorder, labelClass, placeholder, borderColor } = toRefs(props)
+const { modelValue, error, errorColor, labelBorder, labelClass, placeholder, borderColor, preview } = toRefs(props)
 const slots = useSlots()
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
@@ -48,14 +59,14 @@ const borderColorComputed = computed(() => {
 const checkIcon = computed(() => {
     return !!slots.icon
 })
-
 function updateValue(event: any) {
-    //correct the value if necessary and update it
     emit('update:modelValue', Object.values(event.target.files)[0])
+}
+function loadFile(file: any) {
+    return URL.createObjectURL(file)
 }
 </script>
 <style scoped lang="scss">
-//material inputs
 .error {
     padding-left: 0.1rem;
     padding-right: 0.1rem;

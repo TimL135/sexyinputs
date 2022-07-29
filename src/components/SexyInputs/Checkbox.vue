@@ -1,10 +1,10 @@
 <template>
-    <div class="grid mb-2">
+    <div class="d-flex mb-2">
         <div class="round">
             <input type="checkbox" :id="id" :value="modelValue" @change="updateValue" />
             <label :for="id"></label>
         </div>
-        <div><slot name="text"></slot></div>
+        <label class="ms-4" :for="id" style="cursor: pointer"><slot name="text"></slot></label>
     </div>
 </template>
 <script setup lang="ts">
@@ -12,7 +12,7 @@ import { ref, toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
-        modelValue: any
+        modelValue: boolean
     }>(),
     {}
 )
@@ -23,14 +23,9 @@ function updateValue() {
 }
 </script>
 <style scoped lang="scss">
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 13fr;
-}
 .round {
     position: relative;
 }
-
 .round label {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -42,7 +37,6 @@ function updateValue() {
     top: 0;
     width: 28px;
 }
-
 .round label:after {
     border: 2px solid #fff;
     border-top: none;
@@ -56,16 +50,13 @@ function updateValue() {
     transform: rotate(-45deg);
     width: 12px;
 }
-
 .round input[type='checkbox'] {
     visibility: hidden;
 }
-
 .round input[type='checkbox']:checked + label {
     background-color: #66bb6a;
     border-color: #66bb6a;
 }
-
 .round input[type='checkbox']:checked + label:after {
     opacity: 1;
 }
