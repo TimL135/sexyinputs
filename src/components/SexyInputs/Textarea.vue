@@ -14,8 +14,9 @@
         </label>
         <!-- /placeholder -->
         <!-- error -->
-        <div v-if="error" class="error">
-            {{ error }}
+        <div v-for="(text, lineNumber) of error?.split('<br>')" :key="lineNumber" class="error">
+            {{ text }}
+            <br />
         </div>
         <!-- /error -->
     </div>

@@ -32,7 +32,7 @@
             ></Password>
             <Text placeholder="Username" v-model="username"></Text>
             <Number placeholder="number" v-model="number" max="100" min="0"></Number>
-            <Date placeholder="Date" v-model="date" :error="errors.date">
+            <Date placeholder="Date" v-model="date" error="Hello World! <br> This is my string">
                 <template v-slot:icon>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 448 512">
                         <path
