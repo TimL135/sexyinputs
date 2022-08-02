@@ -32,9 +32,8 @@
     </div>
     <!-- /multiFile list -->
     <!-- error -->
-    <div v-for="(text, lineNumber) of error?.split('<br>')" :key="lineNumber" class="error">
-        {{ text }}
-        <br />
+    <div class="error" v-if="errorValue.length > 0">
+        {{ errorValue }}
     </div>
     <!-- /error -->
 </template>
@@ -51,6 +50,7 @@ const props = withDefaults(
         preview?: boolean
     }>(),
     {
+        error: '',
         borderColor: 'black',
         errorColor: 'red',
         preview: false,
@@ -60,7 +60,7 @@ const props = withDefaults(
     }
 )
 const { fileArray, error, errorColor, borderColor, preview, multiFileClass } = toRefs(props)
-
+const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -108,6 +108,7 @@ function loadFile(file: any) {
     z-index: 9999;
     text-align: start;
     font-size: 0.8rem;
+    white-space: pre-line;
 }
 
 button {

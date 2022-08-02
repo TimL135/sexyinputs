@@ -42,9 +42,8 @@
         />
         <!-- /sideInput -->
         <!-- error -->
-        <div v-for="(text, lineNumber) of error?.split('<br>')" :key="lineNumber" class="error">
-            {{ text }}
-            <br />
+        <div class="error" v-if="errorValue.length > 0">
+            {{ errorValue }}
         </div>
         <!-- /error -->
     </div>
@@ -61,7 +60,7 @@ const props = withDefaults(
         labelClass?: string
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
-        btnAction?: Function
+        btnAction?: () => Promise<void> | void
         sideWidth?: number
         sideInputType?: 'number' | 'text'
         sideInputClass?: string
@@ -71,8 +70,9 @@ const props = withDefaults(
         borderColor?: string
     }>(),
     {
+        error: '',
         errorColor: 'red',
-        sideWidth: '20%',
+        sideWidth: 20,
     }
 )
 const {
@@ -94,6 +94,7 @@ const {
 } = toRefs(props)
 const isInputFocus = ref(false)
 const slots = useSlots()
+const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -105,20 +106,16 @@ const checkButton = computed(() => {
 })
 const inputWidth = computed(() => {
     let width = 100
-    if (sideInputType || checkButton) width -= parseInt(sideWidth?.value) || 0
+    if (sideInputType || checkButton) width -= sideWidth.value || 0
     return width + '%'
 })
 const sideWidthComputed = computed(() => {
-    let width = sideWidth?.value
+    let width = sideWidth.value
     return width + '%'
 })
 async function affirm() {
     //executes the btnAction
-    try {
-        if (btnAction?.value) await btnAction.value()
-    } catch {
-        return
-    }
+if (btnAction?.value) await btnAction.value()
 }
 function updateValue(event: any) {
     emit('update:modelValue', event.target.value)
@@ -137,6 +134,7 @@ function updateSideValue(event: any) {
     z-index: 9999;
     text-align: start;
     font-size: 0.8rem;
+    white-space: pre-line;
 }
 .input-contain {
     position: relative;

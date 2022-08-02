@@ -76,9 +76,8 @@
             <!-- /sideInput -->
         </div>
         <!-- error -->
-                <div v-for="(text, lineNumber) of error?.split('<br>')" :key="lineNumber" class="error">
-            {{ text }}
-            <br />
+        <div class="error" v-if="errorValue.length > 0">
+            {{ errorValue }}
         </div>
         <!-- /error -->
         <!-- multiSelect list -->
@@ -136,6 +135,7 @@ const props = withDefaults(
         matchFromStart?: boolean
     }>(),
     {
+        error: '',
         noElementMessage: 'not found',
         controlInput: true,
         selectOnBlur: true,
@@ -181,6 +181,7 @@ const {
 const id = ref(JSON.stringify(Math.random()))
 const slots = useSlots()
 const isListVisible = ref(false)
+const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -224,11 +225,7 @@ const filteredItems = computed(() => {
 
 async function affirm() {
     //executes the btnAction
-    try {
-        if (btnAction?.value) await btnAction.value()
-    } catch {
-        return
-    }
+    if (btnAction?.value) await btnAction.value()
 }
 function onInput(event: Event) {
     //is executed when something is entered in selectInput.
@@ -307,6 +304,7 @@ function updateSideValue(event: any) {
     z-index: 9999;
     text-align: start;
     font-size: 0.8rem;
+    white-space: pre-line;
 }
 .input-contain {
     position: relative;

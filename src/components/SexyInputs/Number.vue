@@ -42,9 +42,8 @@
         />
         <!-- /sideInput -->
         <!-- error -->
-                <div v-for="(text, lineNumber) of error?.split('<br>')" :key="lineNumber" class="error">
-            {{ text }}
-            <br />
+        <div class="error" v-if="errorValue.length > 0">
+            {{ errorValue }}
         </div>
         <!-- /error -->
     </div>
@@ -62,7 +61,7 @@ const props = withDefaults(
         labelClass?: string
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
-        btnAction?: Function
+        btnAction?: () => Promise<void> | void
         sideWidth?: number
         sideInputType?: 'number' | 'text'
         sideInputClass?: string
@@ -72,6 +71,7 @@ const props = withDefaults(
         borderColor?: string
     }>(),
     {
+        error: '',
         controlInput: true,
         errorColor: 'red',
         sideWidth: 20,
@@ -97,6 +97,7 @@ const {
 } = toRefs(props)
 const isInputFocus = ref(false)
 const slots = useSlots()
+const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -117,11 +118,7 @@ const sideWidthComputed = computed(() => {
 })
 async function affirm() {
     //executes the btnAction
-    try {
-        if (btnAction?.value) await btnAction.value()
-    } catch {
-        return
-    }
+    if (btnAction?.value) await btnAction.value()
 }
 function updateValue(event: any) {
     //correct the value if necessary and update it
@@ -152,6 +149,7 @@ function updateSideValue(event: any) {
     z-index: 9999;
     text-align: start;
     font-size: 0.8rem;
+    white-space: pre-line;
 }
 .input-contain {
     position: relative;

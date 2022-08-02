@@ -24,9 +24,8 @@
         </label>
         <!-- /placeholder -->
         <!-- error -->
-        <div v-for="(text, lineNumber) of error?.split('<br>')" :key="lineNumber" class="error">
-            {{ text }}
-            <br />
+        <div class="error" v-if="errorValue.length > 0">
+            {{ errorValue }}
         </div>
         <!-- /error -->
     </div>
@@ -45,6 +44,7 @@ const props = withDefaults(
         borderColor?: string
     }>(),
     {
+        error: '',
         errorColor: 'red',
         sideWidth: '20%',
     }
@@ -61,6 +61,7 @@ onMounted(() => {
 
 const isInputFocus = ref(false)
 const slots = useSlots()
+const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -81,6 +82,7 @@ function updateValue(event: any) {
     z-index: 9999;
     text-align: start;
     font-size: 0.8rem;
+    white-space: pre-line;
 }
 .input-contain {
     position: relative;

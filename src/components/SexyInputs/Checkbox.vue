@@ -8,16 +8,18 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
         modelValue: boolean
+        id?: string
     }>(),
-    {}
+    {
+        id: JSON.stringify(Math.random()),
+    }
 )
 const { modelValue } = toRefs(props)
-const id = ref(JSON.stringify(Math.random()))
 function updateValue() {
     emit('update:modelValue', !modelValue.value)
 }
