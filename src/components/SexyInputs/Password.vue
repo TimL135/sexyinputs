@@ -181,7 +181,8 @@ function updateValue(event: any) {
         transform: translate(0);
         color: gray;
         border-radius: 0.5rem;
-        transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out;
+        transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out,
+            0.15s padding ease-in-out;
     }
     input:focus + .text,
     input.dirty + .text {

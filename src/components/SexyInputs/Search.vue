@@ -115,7 +115,7 @@ const sideWidthComputed = computed(() => {
 })
 async function affirm() {
     //executes the btnAction
-if (btnAction?.value) await btnAction.value()
+    if (btnAction?.value) await btnAction.value()
 }
 function updateValue(event: any) {
     emit('update:modelValue', event.target.value)
@@ -216,7 +216,8 @@ function updateSideValue(event: any) {
         transform: translate(0);
         color: gray;
         border-radius: 0.5rem;
-        transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out;
+        transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out,
+            0.15s padding ease-in-out;
     }
     input:focus + .text,
     input.dirty + .text {

@@ -351,7 +351,8 @@ function updateSideValue(event: any) {
         transform: translate(0);
         color: gray;
         border-radius: 0.5rem;
-        transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out;
+        transition: transform 0.15s ease-out, font-size 0.15s ease-out, background-color 0.2s ease-out, color 0.15s ease-out,
+            0.15s padding ease-in-out;
     }
     input:focus + .text,
     input.dirty + .text {
@@ -401,8 +402,13 @@ function updateSideValue(event: any) {
         .simple-typeahead-list-item {
             border-bottom: 1px solid;
             border-color: v-bind(borderColorComputed);
-            // border-right: 1px solid;
             padding: 0.6rem 1rem;
+            background-color: #fafafa;
+            &:hover {
+                @media (pointer: fine) {
+                    filter: brightness(85%);
+                }
+            }
             &:last-child {
                 border-bottom: none;
             }
@@ -412,7 +418,7 @@ function updateSideValue(event: any) {
             background-color: transparent;
         }
         &::-webkit-scrollbar {
-            width: 12px;
+            width: 0.5rem;
             background-color: transparent;
         }
         &::-webkit-scrollbar-thumb {

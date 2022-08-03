@@ -15,7 +15,7 @@
         >
             <div style="grid-area: name" class="text-center ms-1">{{ file.name }}</div>
             <div v-if="preview" style="grid-area: pic" class="d-flex justify-content-center">
-                <img :src="loadFile(file)" style="height: 5rem; max-width: 100%" alt="" />
+                <img :src="loadFile(file)" style="max-height: 5rem; max-width: 100%" alt="" />
             </div>
             <span @click="emit('deleteFile', index)" style="grid-area: trash; cursor: pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
