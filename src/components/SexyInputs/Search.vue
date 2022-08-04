@@ -159,6 +159,9 @@ function updateSideValue(event: any) {
         &::-webkit-search-cancel-button {
             display: none;
         }
+        &:focus {
+            border-width: 2px;
+        }
     }
     button {
         &:hover {
@@ -173,6 +176,12 @@ function updateSideValue(event: any) {
             @media (pointer: coarse) {
                 filter: brightness(85%);
             }
+        }
+    }
+    input.sideInput {
+        &:focus {
+            border: 2px solid;
+            border-color: v-bind(borderColorComputed);
         }
     }
     button,

@@ -176,6 +176,30 @@ function updateSideValue(event: any) {
             -webkit-appearance: none;
             margin: 0;
         }
+        &:focus {
+            border-width: 2px;
+        }
+    }
+    button {
+        &:hover {
+            @media (pointer: fine) {
+                filter: brightness(85%);
+            }
+        }
+        &:active {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+            @media (pointer: coarse) {
+                filter: brightness(85%);
+            }
+        }
+    }
+    input.sideInput {
+        &:focus {
+            border: 2px solid;
+            border-color: v-bind(borderColorComputed);
+        }
     }
     button,
     input.sideInput {

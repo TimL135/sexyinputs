@@ -342,6 +342,12 @@ function updateSideValue(event: any) {
             }
         }
     }
+        input.sideInput {
+        &:focus {
+            border: 2px solid;
+            border-color: v-bind(borderColorComputed);
+        }
+    } 
     button,
     input.sideInput {
         align-items: center;

@@ -187,6 +187,9 @@ function roundOnBlur(event: any) {
             margin-top: -0.4rem;
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
         }
+        &:focus {
+            border-width: 2px;
+        }
     }
     .sideInput {
         align-items: center;
@@ -211,6 +214,10 @@ function roundOnBlur(event: any) {
         &::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
+        }
+        &:focus {
+            border: 2px solid;
+            border-color: v-bind(borderColorComputed);
         }
     }
     input + .text {

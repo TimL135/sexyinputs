@@ -78,6 +78,9 @@ function updateValue(event: any) {
         border: 1px solid;
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
+        &:focus {
+            border-width: 2px;
+        }
     }
     textarea + .text {
         align-items: center;
