@@ -121,7 +121,8 @@ function roundOnBlur(event: any) {
         background-color: transparent;
         position: absolute;
         top: 0.5rem;
-        left: 0.2rem;
+        left: 0.3rem;
+        z-index: 2;
     }
     input {
         text-align: start;
@@ -137,6 +138,15 @@ function roundOnBlur(event: any) {
         border-radius: 0.5rem 0 0 0.5rem;
         width: v-bind(inputWidth);
         cursor: pointer;
+        &:hover:not(:focus) + .text,
+        &:hover:not(:focus) {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+        }
+        &:focus {
+            border-width: 2px;
+        }
         &::-moz-range-track {
             height: 0.2rem;
             background: linear-gradient(to right, #293043, #293043), #d7d7d7;
