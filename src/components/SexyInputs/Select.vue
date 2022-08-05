@@ -286,15 +286,15 @@ function updateSideValue(event: any) {
     button {
         &:hover {
             @media (pointer: fine) {
-                filter: brightness(85%);
+                filter: brightness(95%);
             }
         }
         &:active {
             @media (pointer: fine) {
-                filter: brightness(95%);
+                filter: brightness(85%);
             }
             @media (pointer: coarse) {
-                filter: brightness(85%);
+                filter: brightness(95%);
             }
         }
     }
@@ -389,7 +389,7 @@ function updateSideValue(event: any) {
             background-color: #fafafa;
             &:hover {
                 @media (pointer: fine) {
-                    filter: brightness(85%);
+                    filter: brightness(95%);
                 }
             }
             &:last-child {
