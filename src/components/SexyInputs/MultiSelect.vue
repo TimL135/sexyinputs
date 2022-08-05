@@ -28,7 +28,7 @@
                 autocomplete="off"
             />
             <!-- label for select -->
-            <label class="text" :class="[{ withBorder: labelBorder }, labelClass]">
+            <label class="text" :class="labelClass">
                 {{ placeholder }}
             </label>
             <!-- /label for select -->
@@ -115,7 +115,6 @@ const props = withDefaults(
         listClass?: string
         error?: string
         errorColor?: string
-        labelBorder?: boolean
         labelClass?: string
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
@@ -161,7 +160,6 @@ const {
     listClass,
     error,
     errorColor,
-    labelBorder,
     labelClass,
     btnType,
     btnClass,
@@ -307,6 +305,15 @@ function updateSideValue(event: any) {
         border: 1px solid;
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
+        &:hover:not(:focus) + .text,
+        &:hover:not(:focus) {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+        }
+        &:focus {
+            border-width: 2px;
+        }
     }
     button {
         &:hover {
@@ -380,20 +387,8 @@ function updateSideValue(event: any) {
         font-size: 0.9rem;
         padding: 0 0.3rem;
         color: black;
-        transform: translate(0, -1.15rem);
-        &.text.withBorder:after {
-            content: '';
-            position: absolute;
-            left: 0px;
-            width: 100%;
-            height: 50%;
-            margin-top: -0.5rem;
-            border-radius: 0.5rem 0.5rem 0rem 0rem;
-            border-left: 1px solid;
-            border-right: 1px solid;
-            border-top: 1px solid;
-            border-color: v-bind(borderColorComputed);
-        }
+        transform: translate(0, -1rem);
+        height: 0.9rem;
     }
 }
 //select

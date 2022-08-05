@@ -11,7 +11,7 @@
             type="email"
             :value="modelValue"
             @input="updateValue"
-            :class="[{ dirty: modelValue }, error && labelBorder ? 'mt-4' : '']"
+            :class="{ dirty: modelValue }"
             :style="[
                 checkButton || sideInputType ? `border-radius: 0.5rem 0 0 0.5rem; width:${inputWidth}` : '',
                 checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;',
@@ -21,7 +21,7 @@
             autocomplete="off"
         />
         <!-- placeholder -->
-        <label class="text" :class="[{ withBorder: labelBorder }, labelClass]">
+        <label class="text" :class="labelClass">
             {{ placeholder }}
         </label>
         <!-- /placeholder -->
@@ -56,7 +56,6 @@ const props = withDefaults(
         modelValue: string
         error?: string
         errorColor?: string
-        labelBorder?: boolean
         labelClass?: string
         btnType?: 'button' | 'submit' | 'reset'
         btnClass?: string
@@ -79,7 +78,6 @@ const {
     modelValue,
     error,
     errorColor,
-    labelBorder,
     labelClass,
     btnType,
     btnClass,
@@ -138,6 +136,12 @@ function updateSideValue(event: any) {
         border-radius: 0.5rem;
         &:focus {
             border-width: 2px;
+        }
+        &:hover:not(:focus) + .text,
+        &:hover:not(:focus) {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
         }
     }
     button {
@@ -212,20 +216,8 @@ function updateSideValue(event: any) {
         font-size: 0.9rem;
         padding: 0 0.3rem;
         color: black;
-        transform: translate(0, -1.15rem);
-        &.text.withBorder:after {
-            content: '';
-            position: absolute;
-            left: 0px;
-            width: 100%;
-            height: 50%;
-            margin-top: -0.5rem;
-            border-radius: 0.5rem 0.5rem 0rem 0rem;
-            border-left: 1px solid;
-            border-right: 1px solid;
-            border-top: 1px solid;
-            border-color: v-bind(borderColorComputed);
-        }
+        transform: translate(0, -1rem);
+        height: 0.9rem;
     }
 }
 </style>

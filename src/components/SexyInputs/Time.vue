@@ -11,7 +11,6 @@
             type="time"
             :value="modelValue"
             @input="updateValue"
-            :class="error && labelBorder ? 'mt-4' : ''"
             :style="checkIcon ? 'padding-left: 1.5rem;' : 'padding-left: none;'"
             @focus="isInputFocus = true"
             @blur="isInputFocus = false"
@@ -19,7 +18,7 @@
             required
         />
         <!-- placeholder -->
-        <label class="text" :class="[{ withBorder: labelBorder }, labelClass]">
+        <label class="text" :class="labelClass">
             {{ placeholder }}
         </label>
         <!-- /placeholder -->
@@ -37,7 +36,6 @@ const props = withDefaults(
         modelValue: string
         error?: string
         errorColor?: string
-        labelBorder?: boolean
         labelClass?: string
         placeholder: string
         borderColor?: string
@@ -48,7 +46,7 @@ const props = withDefaults(
         sideWidth: '20%',
     }
 )
-const { modelValue, error, errorColor, labelBorder, labelClass, placeholder, borderColor } = toRefs(props)
+const { modelValue, error, errorColor, labelClass, placeholder, borderColor } = toRefs(props)
 onMounted(() => {
     //set standard value to current time
     if (modelValue.value.length != 5) {
@@ -92,6 +90,16 @@ function updateValue(event: any) {
         border: 1px solid;
         border-color: v-bind(borderColorComputed);
         border-radius: 0.5rem;
+        cursor: pointer;
+        &:hover:not(:focus) + .text,
+        &:hover:not(:focus) {
+            @media (pointer: fine) {
+                filter: brightness(95%);
+            }
+        }
+        &:focus {
+            border-width: 2px;
+        }
         &::-webkit-calendar-picker-indicator {
             display: flex;
             justify-content: end;
@@ -122,20 +130,8 @@ function updateValue(event: any) {
         font-size: 0.9rem;
         padding: 0 0.3rem;
         color: black;
-        transform: translate(0, -1.15rem);
-        &.text.withBorder:after {
-            content: '';
-            position: absolute;
-            left: 0px;
-            width: 100%;
-            height: 50%;
-            margin-top: -0.5rem;
-            border-radius: 0.5rem 0.5rem 0rem 0rem;
-            border-left: 1px solid;
-            border-right: 1px solid;
-            border-top: 1px solid;
-            border-color: v-bind(borderColorComputed);
-        }
+        transform: translate(0, -1rem);
+        height: 0.9rem;
     }
 }
 </style>

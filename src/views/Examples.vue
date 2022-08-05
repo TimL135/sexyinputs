@@ -21,15 +21,7 @@
             <Email placeholder="email" v-model="email" :label-border="true" errorColor="black">
                 <template v-slot:button>test</template>
             </Email>
-            <Password
-                placeholder="Password"
-                v-model="password"
-                class="mt-4"
-                :labelBorder="true"
-                :error="errors.password"
-                required
-                data-test="password"
-            ></Password>
+            <Password placeholder="Password" v-model="password" class="mt-4" :error="errors.password" required data-test="password"></Password>
             <Text placeholder="Username" v-model="username"></Text>
             <Number placeholder="number" v-model="number" max="100" min="0" error="f"></Number>
             <Date placeholder="Date" v-model="date" error="'Hello World! <br> This is my string\n With different newlines'">
@@ -62,7 +54,7 @@
             >
                 <template v-slot:button>datei auswählen</template>
             </MultiFile>
-            <Textarea placeholder="Text" v-model="text" :labelBorder="true"></Textarea>
+            <Textarea placeholder="Text" v-model="text"></Textarea>
             <Range placeholder="Volume" v-model="range" :sideWidth="15"></Range>
             <Select
                 placeholder="Select"
