@@ -32,13 +32,12 @@
     </div>
     <!-- /multiFile list -->
     <!-- error -->
-    <div class="error" v-if="errorValue.length > 0">
-        {{ errorValue }}
-    </div>
+    <Error :error="error" :error-color="errorColor" />
     <!-- /error -->
 </template>
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
+import Error from './common/error.vue'
 const emit = defineEmits(['addFile', 'deleteFile'])
 const props = withDefaults(
     defineProps<{
@@ -60,7 +59,7 @@ const props = withDefaults(
     }
 )
 const { fileArray, error, errorColor, borderColor, preview, multiFileClass } = toRefs(props)
-const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
+
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -98,17 +97,6 @@ function loadFile(file: any) {
 .multiFile {
     display: grid;
     grid-template-columns: 1fr 1fr;
-}
-
-.error {
-    padding-left: 0.1rem;
-    padding-right: 0.1rem;
-    background-color: transparent;
-    color: v-bind(errorColor);
-    z-index: 9999;
-    text-align: start;
-    font-size: 0.8rem;
-    white-space: pre-line;
 }
 
 button {

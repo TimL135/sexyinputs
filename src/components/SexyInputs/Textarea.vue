@@ -14,14 +14,13 @@
         </label>
         <!-- /placeholder -->
         <!-- error -->
-        <div class="error" v-if="errorValue.length > 0">
-            {{ errorValue }}
-        </div>
+        <Error :error="error" :error-color="errorColor" />
         <!-- /error -->
     </div>
 </template>
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
+import Error from './common/error.vue'
 const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
@@ -40,7 +39,7 @@ const props = withDefaults(
     }
 )
 const { modelValue, error, errorColor, labelBorder, labelClass, placeholder, borderColor } = toRefs(props)
-const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
+
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -49,16 +48,6 @@ function updateValue(event: any) {
 }
 </script>
 <style scoped lang="scss">
-.error {
-    padding-left: 0.1rem;
-    padding-right: 0.1rem;
-    background-color: transparent;
-    color: v-bind(errorColor);
-    z-index: 9999;
-    text-align: start;
-    font-size: 0.8rem;
-    white-space: pre-line;
-}
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
@@ -66,7 +55,6 @@ function updateValue(event: any) {
     .icon {
         background-color: transparent;
         position: absolute;
-        z-index: 9999;
         top: 0.5rem;
         left: 0.2rem;
     }

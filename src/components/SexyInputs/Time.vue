@@ -24,14 +24,13 @@
         </label>
         <!-- /placeholder -->
         <!-- error -->
-        <div class="error" v-if="errorValue.length > 0">
-            {{ errorValue }}
-        </div>
+        <Error :error="error" :error-color="errorColor" />
         <!-- /error -->
     </div>
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref, toRefs, useSlots } from 'vue'
+import Error from './common/error.vue'
 const emit = defineEmits(['update:modelValue'])
 const props = withDefaults(
     defineProps<{
@@ -61,7 +60,7 @@ onMounted(() => {
 
 const isInputFocus = ref(false)
 const slots = useSlots()
-const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
+
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -74,16 +73,6 @@ function updateValue(event: any) {
 }
 </script>
 <style scoped lang="scss">
-.error {
-    padding-left: 0.1rem;
-    padding-right: 0.1rem;
-    background-color: transparent;
-    color: v-bind(errorColor);
-    z-index: 9999;
-    text-align: start;
-    font-size: 0.8rem;
-    white-space: pre-line;
-}
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
@@ -91,7 +80,6 @@ function updateValue(event: any) {
     .icon {
         background-color: transparent;
         position: absolute;
-        z-index: 9999;
         top: 0.5rem;
         left: 0.2rem;
     }
@@ -125,7 +113,6 @@ function updateValue(event: any) {
         font-size: 1rem;
         padding: 0 0rem;
         margin: 0 0.6rem;
-        color: gray;
         border-radius: 0.5rem;
     }
 

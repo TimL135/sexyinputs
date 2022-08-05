@@ -76,14 +76,14 @@
             <!-- /sideInput -->
         </div>
         <!-- error -->
-        <div class="error" v-if="errorValue.length > 0">
-            {{ errorValue }}
-        </div>
+        <Error :error="error" :error-color="errorColor" />
         <!-- /error -->
     </div>
 </template>
 <script setup lang="ts">
 import { computed, ref, toRefs, useSlots } from 'vue'
+import { useCalcSideWidth } from './global.js'
+import Error from './common/error.vue'
 const emit = defineEmits(['update:modelValue', 'update:sideInputVModel', 'onInput', 'onFocus', 'selectItem', 'onBlur'])
 const props = withDefaults(
     defineProps<{
@@ -154,7 +154,7 @@ const {
 const id = ref(JSON.stringify(Math.random()))
 const slots = useSlots()
 const isListVisible = ref(false)
-const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
+
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -164,15 +164,7 @@ const checkIcon = computed(() => {
 const checkButton = computed(() => {
     return !!slots.button
 })
-const inputWidth = computed(() => {
-    let width = 100
-    if (sideInputType || checkButton) width -= sideWidth?.value || 0
-    return width + '%'
-})
-const sideWidthComputed = computed(() => {
-    let width = sideWidth?.value
-    return width + '%'
-})
+const { inputWidth, sideWidthComputed } = useCalcSideWidth(sideWidth)
 const filteredItems = computed(() => {
     //options that are still possible
     let regexp: RegExp
@@ -264,23 +256,12 @@ function updateSideValue(event: any) {
 }
 </script>
 <style scoped lang="scss">
-.error {
-    padding-left: 0.1rem;
-    padding-right: 0.1rem;
-    background-color: transparent;
-    color: v-bind(errorColor);
-    z-index: 9999;
-    text-align: start;
-    font-size: 0.8rem;
-    white-space: pre-line;
-}
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
     .icon {
         background-color: transparent;
         position: absolute;
-        z-index: 9999;
         top: 0.5rem;
         left: 0.2rem;
     }
@@ -314,7 +295,7 @@ function updateSideValue(event: any) {
             border: 2px solid;
             border-color: v-bind(borderColorComputed);
         }
-    } 
+    }
     button,
     input.sideInput {
         align-items: center;
@@ -403,7 +384,7 @@ function updateSideValue(event: any) {
         border: 2px solid;
         border-color: v-bind(borderColorComputed);
         border-top: none;
-        z-index: 9999;
+        z-index: 2;
         cursor: pointer;
         .simple-typeahead-list-item {
             border-bottom: 1px solid;

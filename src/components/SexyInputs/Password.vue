@@ -48,14 +48,14 @@
         </button>
         <!-- /sideButton -->
         <!-- error -->
-        <div class="error" v-if="errorValue.length > 0">
-            {{ errorValue }}
-        </div>
+        <Error :error="error" :error-color="errorColor" />
         <!-- /error -->
     </div>
 </template>
 <script setup lang="ts">
 import { computed, ref, toRefs, useSlots } from 'vue'
+import { useCalcSideWidth } from './global.js'
+import Error from './common/error.vue'
 const emit = defineEmits(['update:modelValue', 'update:sideInputVModel'])
 const props = withDefaults(
     defineProps<{
@@ -79,7 +79,7 @@ const { modelValue, error, errorColor, labelBorder, labelClass, btnClass, sideWi
 const viewPassword = ref(false)
 const isInputFocus = ref(false)
 const slots = useSlots()
-const errorValue = computed(() => error.value.replaceAll(/\\n|<br>/g, '\n'))
+
 const borderColorComputed = computed(() => {
     return error?.value ? errorColor?.value : borderColor?.value
 })
@@ -87,30 +87,13 @@ const checkIcon = computed(() => {
     return !!slots.icon
 })
 
-const inputWidth = computed(() => {
-    let width = 100
-    width -= sideWidth?.value || 0
-    return width + '%'
-})
-const sideWidthComputed = computed(() => {
-    let width = sideWidth?.value
-    return width + '%'
-})
+const { inputWidth, sideWidthComputed } = useCalcSideWidth(sideWidth)
+
 function updateValue(event: any) {
     emit('update:modelValue', event.target.value)
 }
 </script>
 <style scoped lang="scss">
-.error {
-    padding-left: 0.1rem;
-    padding-right: 0.1rem;
-    background-color: transparent;
-    color: v-bind(errorColor);
-    z-index: 9999;
-    text-align: start;
-    font-size: 0.8rem;
-    white-space: pre-line;
-}
 .input-contain {
     position: relative;
     border-radius: 0.5rem;
@@ -118,7 +101,6 @@ function updateValue(event: any) {
     .icon {
         background-color: transparent;
         position: absolute;
-        z-index: 9999;
         top: 0.5rem;
         left: 0.2rem;
     }
