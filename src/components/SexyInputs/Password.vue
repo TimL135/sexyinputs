@@ -152,7 +152,7 @@ function updateValue(event: any) {
                 filter: brightness(85%);
             }
             @media (pointer: coarse) {
-                filter: brightness(95%);
+                filter: brightness(85%);
             }
         }
     }
