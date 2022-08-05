@@ -11,7 +11,7 @@ button {
     border-color: black;
     border-width: 1px;
     border-radius: 0.5rem;
-    transition: all 250ms linear;
+    transition: all 0.25s ease-out;
     &:hover {
         @media (pointer: fine) {
             filter: brightness(95%);

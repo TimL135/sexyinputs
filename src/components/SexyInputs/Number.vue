@@ -168,6 +168,7 @@ function updateSideValue(event: any) {
         }
     }
     button {
+        transition: all 0.25s ease-out;
         &:hover {
             @media (pointer: fine) {
                 filter: brightness(95%);

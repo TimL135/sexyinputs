@@ -141,7 +141,7 @@ function updateValue(event: any) {
         background-color: white;
         justify-content: center;
         outline: none;
-
+        transition: all 0.25s ease-out;
         &:hover {
             @media (pointer: fine) {
                 filter: brightness(95%);
