@@ -1,4 +1,6 @@
 <template>
+    <div></div>
+    <div></div>
     <div class="mt-3">
         <div class="simple-typeahead input-contain">
             <!-- icon -->
@@ -7,7 +9,7 @@
             </div>
             <!-- /icon -->
             <input
-                v-bind="$attrs"
+                v-bind="attrs"
                 :id="id"
                 class="simple-typeahead-input form-control shadow-none"
                 :style="[
@@ -81,9 +83,10 @@
     </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, toRefs, useSlots } from 'vue'
+import { computed, ref, toRefs, useSlots, useAttrs } from 'vue'
 import { useCalcSideWidth } from './global.js'
 import Error from './common/error.vue'
+const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue', 'update:sideInputVModel', 'onInput', 'onFocus', 'selectItem', 'onBlur'])
 const props = withDefaults(
     defineProps<{

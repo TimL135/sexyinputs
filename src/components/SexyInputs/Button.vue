@@ -1,4 +1,5 @@
 <template>
+    <div></div>
     <button v-bind="$attrs"><slot name="button"></slot></button>
 </template>
 <style scoped lang="scss">

@@ -1,4 +1,5 @@
 <template>
+    <div></div>
     <div :class="row ? 'row' : ''">
         <div v-for="option of options" :key="JSON.stringify(option)">
             <div class="d-flex mb-2">
