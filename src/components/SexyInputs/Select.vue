@@ -86,11 +86,6 @@ export default {
     inheritAttrs: false,
 }
 </script>
-<script lang="ts">
-export default {
-    inheritAttrs: false,
-}
-</script>
 <script setup lang="ts">
 import { computed, ref, toRefs, useSlots, useAttrs } from 'vue'
 import { useCalcSideWidth } from './global.js'
