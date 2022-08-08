@@ -1,5 +1,4 @@
 <template>
-    <div></div>
     <div class="d-flex mb-2">
         <div class="round">
             <input type="checkbox" :id="id" :value="modelValue" @change="updateValue" />
@@ -8,6 +7,11 @@
         <label class="ms-4" :for="id" style="cursor: pointer"><slot name="text"></slot></label>
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue'])

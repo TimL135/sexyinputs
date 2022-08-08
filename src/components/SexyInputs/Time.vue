@@ -1,5 +1,4 @@
 <template>
-    <div></div>
     <div class="input-contain mt-3">
         <!-- icon -->
         <div v-if="checkIcon" class="icon">
@@ -28,6 +27,11 @@
         <!-- /error -->
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, onMounted, ref, toRefs, useSlots } from 'vue'
 import Error from './common/error.vue'

@@ -1,5 +1,4 @@
 <template>
-    <div></div>
     <div class="mt-3">
         <div class="simple-typeahead input-contain">
             <!-- icon -->
@@ -102,6 +101,11 @@
         <!-- /multiSelect list -->
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, ref, toRefs, useSlots } from 'vue'
 import { useCalcSideWidth } from './global.js'

@@ -1,9 +1,13 @@
 <template>
-    <div></div>
     <div class="error" v-if="errorValue.length > 0">
         {{ errorValue }}
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
 const props = withDefaults(

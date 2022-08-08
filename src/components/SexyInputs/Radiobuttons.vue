@@ -1,5 +1,4 @@
 <template>
-    <div></div>
     <div :class="row ? 'row' : ''">
         <div v-for="option of options" :key="JSON.stringify(option)">
             <div class="d-flex mb-2">
@@ -19,6 +18,11 @@
         </div>
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue'
 const emit = defineEmits(['update:modelValue'])

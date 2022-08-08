@@ -1,7 +1,11 @@
 <template>
-    <div></div>
     <button v-bind="$attrs"><slot name="button"></slot></button>
 </template>
+<script>
+export default {
+    inheritAttrs: false,
+}
+</script>
 <style scoped lang="scss">
 button {
     height: 2.5rem;

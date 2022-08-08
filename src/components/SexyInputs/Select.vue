@@ -1,6 +1,5 @@
 <template>
-    <div></div>
-    <div></div>
+    <!-- <div></div> -->
     <div class="mt-3">
         <div class="simple-typeahead input-contain">
             <!-- icon -->
@@ -82,6 +81,16 @@
         <!-- /error -->
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, ref, toRefs, useSlots, useAttrs } from 'vue'
 import { useCalcSideWidth } from './global.js'

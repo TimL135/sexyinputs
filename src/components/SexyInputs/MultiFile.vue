@@ -1,5 +1,4 @@
 <template>
-    <div></div>
     <div class="input-contain mt-3">
         <input hidden v-bind="$attrs" style="width: 100%" type="file" autocomplete="off" @change="previewFiles" multiple :id="id" />
         <button v-bind="$attrs" @click="clickFileInput" type="button" :id="id + 'button'"><slot name="button"></slot></button>
@@ -36,6 +35,11 @@
     <Error :error="error" :error-color="errorColor" />
     <!-- /error -->
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue'
 import Error from './common/error.vue'

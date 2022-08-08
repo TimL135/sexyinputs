@@ -1,5 +1,4 @@
 <template>
-    <div></div>
     <div class="input-contain mt-3">
         <textarea
             v-bind="$attrs"
@@ -19,6 +18,11 @@
         <!-- /error -->
     </div>
 </template>
+<script lang="ts">
+export default {
+    inheritAttrs: false,
+}
+</script>
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
 import Error from './common/error.vue'
